@@ -1,25 +1,40 @@
-# CGAProject
-Dies ist das Template Projekt für die Abschlussprojekte im Modul "Computergrafik und Animation" an der TH Köln.
-
-Bitte forken Sie dieses Projekt und entwickeln Sie Ihr Abschlussprojekt in diesem Fork weiter. Denken Sie daran fabianfriederichs, jm-th-koeln und umuesse als Collaborators hinzuzufügen, damit wir darauf zugreifen können.
-
-Löschen Sie als erstes den Abschnitt CGAProjekt in dieser Datei und füllen Sie den Rest entsprechend aus für die Abgabe.
-
 # Projektname
->Projektname
+>Swipe MI
 
 # Teammitglieder
-Listen Sie hier noch einmal alle Teammitglieder auf.
 - Kevin Repke
 - Paul André Johne
+- Sara Thomas
+
+# Prüfer mit Gitnamen
+- Uwe Müsse (umuesse)
+- Fabian Friederichs (fabianfriederichs)
+- Jannis M. (jm-th-koeln)
 
 # Featureliste
-Listen Sie hier alle relevanten Features als Liste mit sinnvoller Reihenfolge auf mit Angabe wer das Feature implementiert hat.
-Bei starker Ungleicheit der Features behalten wir uns eine individuelle Notenvergabe vor.
-
-Bspw.
-
-- Verschiedene Kameramodelle (Wechsel zwischen orthographischer und perspektivischer Kamera mittels "c") (Berta)
-- Dynamische Kamera (Steuerung mittels Maus und "WASD" auf der Tastatur) (Carola und Armin)
-- Verschiedene Shaderprogramme (Wechsel mittels "s") (Carola)
-- ...
+>grundlegende Idee:
+- Erstellung einer Demo eines isometrischen "Low-Poly-Puzzle-Tile-Slide-Game" namens Swipe MI
+  - Welt aus verschiebbaren Plattformen
+  - konstanter Wechsel zwischen "Verschiebe"- & "Erkundungs"-Modus
+  - Wincondition: Schlüsselobjekt von A nach B bringen
+>Rendering:
+- Erstellen von 3D Modellen => Tiles, Schlüsselobjekt(e), Spielfigur
+>Shaderprogrammierung:
+- Shaderwechsel Phong & Schwarz-Weiß
+- Textureblending durch beispielsweise Glas
+- Parallex Mapping
+>Transformationen:
+- automatische Transformation ("Rascheln" von Blättern eines z.B. Baumes, der auf einer Tile steht)
+- aufgehobene Schlüsselobjekte werden mit der Figur mitbewegt (interaktive abhängige Transformation)
+- Räder der Spielfigur rotieren während gesamtes Objekt sich fortbewegt (mehrstufige Transformationshierarchie)
+>Kamera:
+- Rotieren zu festen Positionen um die Welt
+- isometrische Perspektive
+- Zoomfunktion
+>Texturen:
+- Cubemap(s) in welcher sich die Welt befindet
+- animierte Wassertexture auf Tiles, die Wasserelemente besitzen
+>Weitergehende Konzepte:
+- Objekt Kollision
+- Shadow Mapping
+- Hintergrundmusik (z.B. mit PlaySound Funktion von Mikrosoft)

@@ -38,3 +38,4 @@
 - Objekt Kollision
 - Shadow Mapping
 - Hintergrundmusik (z.B. mit PlaySound Funktion von Mikrosoft)
+- Time Tracking (Bestzeiten für das absolvieren des Levels erfassen)

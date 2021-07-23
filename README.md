@@ -2,9 +2,9 @@
 >Swipe MI
 
 # Teammitglieder
-- Kevin Repke
-- Paul André Johne
-- Sara Thomas
+- Kevin Repke (11141317)
+- Paul André Johne (11138534)
+- Sara Thomas (11131860)
 
 # Prüfer mit Gitnamen
 - Uwe Müsse (umuesse)
@@ -37,5 +37,5 @@
 >Weitergehende Konzepte:
 - Objekt Kollision
 - Shadow Mapping
-- Hintergrundmusik (z.B. mit PlaySound Funktion von Mikrosoft)
+- Hintergrundmusik (z.B. mit PlaySound Funktion von Microsoft)
 - Time Tracking (Bestzeiten für das absolvieren des Levels erfassen)

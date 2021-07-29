@@ -28,3 +28,11 @@ Desktop.ini
 *.zip
 *.tar.gz
 *.rar
+
+# Ignore everthing in the root folder
+/*
+# Whitelisting
+!/assets/
+!/src/
+!build.gradle
+!.gitignore

@@ -32,7 +32,8 @@ Desktop.ini
 # Ignore everthing in the root folder
 /*
 # Whitelisting
-!project/assets/
-!project/src/
+!/project/assets/
+!/project/src/
+!/video/
 !build.gradle
 !.gitignore

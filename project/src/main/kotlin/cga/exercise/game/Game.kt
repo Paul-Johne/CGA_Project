@@ -2,14 +2,11 @@ package cga.exercise.game
 
 import cga.framework.GameWindow
 
-/*
-  Created by Fabian on 16.09.2017.
- */
 class Game(width: Int,
            height: Int,
            fullscreen: Boolean = false,
            vsync: Boolean = true,
-           val title: String = "Tron - Das unlizenzierte Lizenzspiel",
+           val title: String = "Swipe MI",
            GLVersionMajor: Int = 3,
            GLVersionMinor: Int = 3) : GameWindow(width, height, fullscreen, vsync, GLVersionMajor, GLVersionMinor, title, 4, 120.0f) {
 

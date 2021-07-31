@@ -12,7 +12,6 @@ import org.lwjgl.opengl.*
  * @param attributes vertex attributes contained in vertex data
  * @throws Exception If the creation of the required OpenGL objects fails, an exception is thrown
  *
- * Created by Fabian on 16.09.2017.
  */
 class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material : Material) {
     //private data
@@ -49,7 +48,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     }
 
     /**
-     * renders the mesh
+     * Renders the mesh
      */
     fun render() {
         // todo: place your code here

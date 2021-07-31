@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL33.*
 import org.lwjgl.stb.STBImage
 import java.nio.ByteBuffer
 
-
 class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean): ITexture{
     private var texID: Int = -1
 
@@ -44,10 +43,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
                 STBImage.stbi_image_free(imageData)
             }
         }
-    }/**
- * Created by Fabian on 16.09.2017.
- */
-
+    }
 
     override fun processTexture(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean) {
         texID = glGenTextures()
@@ -70,7 +66,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
         glTexParameterf(GL_TEXTURE_2D,
                 EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                16.0f) //Bewahrt Schärfeeindruck
+                16.0f) // bewahrt Schärfeeindruck
 
         glBindTexture(GL_TEXTURE_2D, 0)
     }

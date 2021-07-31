@@ -3,7 +3,8 @@ package cga.exercise.components.geometry
 import org.joml.Matrix4f
 import org.joml.Vector3f
 
-/** changed var parent to val parent
+/**
+ *  changed var parent to val parent
  *  modelMatrix => V = View Transformation
  */
 open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), val parent: Transformable? = null) {

@@ -9,13 +9,12 @@ import java.nio.FloatBuffer
 import java.nio.file.Files
 import java.nio.file.Paths
 
-/**
- * Created by Fabian on 16.09.2017.
- */
 class ShaderProgram(vertexShaderPath: String, fragmentShaderPath: String) {
     private var programID: Int = 0
+
     // Matrix buffers for setting matrix uniforms. Prevents allocation for each uniform
     private val m4x4buf: FloatBuffer = BufferUtils.createFloatBuffer(16)
+
     /**
      * Sets the active shader program of the OpenGL render pipeline to this shader
      * if this isn't already the currently active shader

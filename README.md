@@ -20,7 +20,7 @@
 >Rendering:
 - Erstellen von 3D Modellen => Tiles, Schlüsselobjekt(e), Spielfigur [Sara, Paul]
 >Shaderprogrammierung:
-- Shaderwechsel Phong & Schwarz-Weiß [Kevin]
+- Shaderwechsel Phong, Schwarz-Weiß & Toon [Kevin]
 - Textureblending durch beispielsweise Glas [Paul]
 - Parallex Mapping [Paul]
 >Transformationen:

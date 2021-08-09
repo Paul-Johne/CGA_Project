@@ -36,10 +36,10 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS); GLError.checkThrow()
 
         /* attributes for each object loaded by OBJLoader */
-        val attribPositionObj : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 0)
-        val attribTextureObj : VertexAttribute = VertexAttribute(2, GL_FLOAT, 32, 12)
-        val attribNormalObj : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 20)
-        val objAttribs = arrayOf(attribPositionObj, attribTextureObj, attribNormalObj)
+        val attribPositionOBJ : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 0)
+        val attribTextureOBJ : VertexAttribute = VertexAttribute(2, GL_FLOAT, 32, 12)
+        val attribNormalOBJ : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 20)
+        val objAttribs = arrayOf(attribPositionOBJ, attribTextureOBJ, attribNormalOBJ)
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))

@@ -30,6 +30,10 @@ class Scene(private val window: GameWindow) {
 
     private val debugCam : TronCamera
     private val tile003BENCH : Renderable
+    private val tile003GROUND : Renderable
+    private val tile003TREE : Renderable
+    private val tile003WALL : Renderable
+    private val tile003WATER : Renderable
 
     init {
         /* initial opengl state */
@@ -64,27 +68,52 @@ class Scene(private val window: GameWindow) {
         val diffWall = Texture2D("assets/textures/diffuse_wall.png", true)
         diffWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
 
-        val tileMat : Material = MaterialTiles(diffPalette01, diffWall)
+        val tileMat : Material = MaterialTiles(diffPalette01)
+        val wallMat : Material = MaterialWall(diffWall)
 
         /* loaded tiles with OBJLoader */
         val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
 
         /* processed tileData */
         val tile003Data : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
+        val tile003IsWall : MutableList<Boolean> = mutableListOf()
+
         for (data in tile003Res.objects) {
             tile003Data.add(data.meshes)
+            tile003IsWall.add(data.isWall)
         }
+
+        println("Wall-Detection: $tile003IsWall")
 
         // tile???Data[OBJECT][MESH] ==> MutableList<Mesh>
         val tile003MeshList : MutableList<Mesh> = mutableListOf()
+        var counter : Int = 0
         for (tileObject in tile003Data) {
             for((meshes, _) in tileObject.withIndex()) {
-                tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
-                                         tileObject[meshes].indexData,
-                                         objAttribs, tileMat))
+
+                if (tile003IsWall[counter]) {
+                    println("Wall detected")
+                    tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
+                                             tileObject[meshes].indexData,
+                                             objAttribs, wallMat))
+                    counter += 1
+                } else {
+                    println("Tile detected")
+                    tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
+                                             tileObject[meshes].indexData,
+                                             objAttribs, tileMat))
+                    counter += 1
+                }
+
             }
         }
+        counter = 0 // resetting counter for next tile
+
         tile003BENCH = Renderable(mutableListOf(tile003MeshList[0]))
+        tile003GROUND = Renderable(mutableListOf(tile003MeshList[1]))
+        tile003TREE = Renderable(mutableListOf(tile003MeshList[2]))
+        tile003WALL = Renderable(mutableListOf(tile003MeshList[3]))
+        tile003WATER = Renderable(mutableListOf(tile003MeshList[4]))
 
         /* implemented camera */
         debugCam = TronCamera(parent = tile003BENCH)
@@ -99,7 +128,11 @@ class Scene(private val window: GameWindow) {
         debugShader.use()
         debugCam.bind(debugShader)
 
+        tile003GROUND.render(debugShader)
+        tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
+        tile003TREE.render(debugShader)
+        tile003WALL.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {
@@ -128,7 +161,7 @@ class Scene(private val window: GameWindow) {
     var lastMousePosY : Double = 0.0
 
     fun onMouseMove(xpos: Double, ypos: Double) {
-        //val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
+        val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
         val yaw = (lastMousePosX - xpos).toFloat() * 0.001f
         val roll = 0.0f
 

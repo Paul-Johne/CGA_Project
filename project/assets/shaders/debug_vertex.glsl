@@ -28,5 +28,5 @@ void main() {
     vertexData.textureCoordinates = tcMultiplier * textureCoordinates; // how stretched the texture will appear in fragment shader
     vertexData.normal = (inverse(transpose(view_matrix * model_matrix)) * vec4(normal,0.0f)).xyz; // Normals to Camera Space
 
-    toCamera = -posCameraSpace.xyz; // for light calculation in fragment shader
+    toCamera = -posCameraSpace.xyz; // for light calculation in fragment shader => UNUSED !!!
 }

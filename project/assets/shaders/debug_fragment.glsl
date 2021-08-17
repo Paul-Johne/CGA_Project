@@ -14,7 +14,11 @@ in struct VertexData {
 
 void main() {
     vec3 diffPaletteTerm = texture(diffPalette, vertexData.textureCoordinates).rgb;
-    vec3 diffWall = texture(diffWall, vertexData.textureCoordinates).rgb;
+    vec3 diffWallTerm = texture(diffWall, vertexData.textureCoordinates).rgb;
 
     color += vec4(diffPaletteTerm, 0.0f);
+    color += vec4(diffWallTerm, 0.0f);
+
+    diffPaletteTerm = vec3(0.0f, 0.0f, 0.0f).rgb;
+    diffWallTerm = vec3(0.0f, 0.0f, 0.0f).rgb;
 }

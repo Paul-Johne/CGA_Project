@@ -13,7 +13,7 @@ import org.lwjgl.opengl.*
  * @throws Exception If the creation of the required OpenGL objects fails, an exception is thrown
  *
  */
-class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material : Material) {
+class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material : Material?) {
     //private data
     private var vao = 0
     private var vbo = 0
@@ -59,7 +59,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     }
 
     fun render(shaderProgram: ShaderProgram){
-        material.bind(shaderProgram)
+        material?.bind(shaderProgram)
         render()
         //material.unbind()
     }

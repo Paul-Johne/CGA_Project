@@ -37,14 +37,22 @@ class MaterialInternship(var diff: Texture2D,
 }
 
 class MaterialTiles(var diffPalette: Texture2D,
-                    var diffWall: Texture2D,
                     var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
 
     override fun bind(shaderProgram: ShaderProgram) {
-        diffPalette.bind(3)
-        diffWall.bind(4)
+        diffPalette.bind(3) // same textureUnit as MaterialWall
 
         shaderProgram.setUniform("diffPalette", 3)
+        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+    }
+}
+
+class MaterialWall(var diffWall: Texture2D,
+                   var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
+
+    override fun bind(shaderProgram: ShaderProgram) {
+        diffWall.bind(3) // same textureUnit as MaterialTiles
+
         shaderProgram.setUniform("diffWall", 4)
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
     }

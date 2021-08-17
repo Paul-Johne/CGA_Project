@@ -18,6 +18,7 @@ import java.awt.Point
 import javax.xml.crypto.dsig.Transform
 import kotlin.system.exitProcess
 import java.io.File
+import java.io.ObjectInput
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
@@ -25,7 +26,11 @@ import javax.sound.sampled.FloatControl
 
 class Scene(private val window: GameWindow) {
 
-    // scene setup
+    private val debugShader : ShaderProgram
+
+    private val debugCam : TronCamera
+    private val tile003BENCH : Renderable
+
     init {
         /* initial opengl state */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -41,6 +46,9 @@ class Scene(private val window: GameWindow) {
         val attribNormalOBJ : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 20)
         val objAttribs = arrayOf(attribPositionOBJ, attribTextureOBJ, attribNormalOBJ)
 
+        /* initialized ShaderPrograms */
+        debugShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
+
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
         val clip : Clip = AudioSystem.getClip()
@@ -49,12 +57,49 @@ class Scene(private val window: GameWindow) {
         val gainControl : FloatControl = clip.getControl(FloatControl.Type.MASTER_GAIN) as FloatControl
         gainControl.value = -12.0f // decreased by 12dB => (1/4 of default volume)
         clip.start()
+
+        /* Texture2Ds for Object-Materials */
+        val diffPalette01 = Texture2D("assets/textures/diffuse_palette01.png", true)
+        diffPalette01.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+        val diffWall = Texture2D("assets/textures/diffuse_wall.png", true)
+        diffWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+
+        val tileMat : Material = MaterialTiles(diffPalette01, diffWall)
+
+        /* loaded tiles with OBJLoader */
+        val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
+
+        /* processed tileData */
+        val tile003Data : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
+        for (data in tile003Res.objects) {
+            tile003Data.add(data.meshes)
+        }
+
+        // tile???Data[OBJECT][MESH] ==> MutableList<Mesh>
+        val tile003MeshList : MutableList<Mesh> = mutableListOf()
+        for (tileObject in tile003Data) {
+            for((meshes, _) in tileObject.withIndex()) {
+                tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
+                                         tileObject[meshes].indexData,
+                                         objAttribs, tileMat))
+            }
+        }
+        tile003BENCH = Renderable(mutableListOf(tile003MeshList[0]))
+
+        /* implemented camera */
+        debugCam = TronCamera(parent = tile003BENCH)
+        debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
+        debugCam.translateLocal(Vector3f(0.0f, 0.0f, 10.0f))
     }
 
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        // shader.use, light.bind and mesh.render
+        /* shader.use | camera.bind | light.bind | mesh.render */
+        debugShader.use()
+        debugCam.bind(debugShader)
+
+        tile003BENCH.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {
@@ -84,12 +129,12 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseMove(xpos: Double, ypos: Double) {
         //val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
-        //val yaw = (lastMousePosX - xpos).toFloat() * 0.001f
-        //val roll = 0.0f
+        val yaw = (lastMousePosX - xpos).toFloat() * 0.001f
+        val roll = 0.0f
 
-        //KAMERA.rotateAroundPoint(0.0f, yaw, roll, Vector3f(0.0f))
-        //lastMousePosX = xpos
-        //lastMousePosY = ypos
+        debugCam.rotateAroundPoint(0.0f, yaw, roll, Vector3f(0.0f))
+        lastMousePosX = xpos
+        lastMousePosY = ypos
     }
 
     fun cleanup() {

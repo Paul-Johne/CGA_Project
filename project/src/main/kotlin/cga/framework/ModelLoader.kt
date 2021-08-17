@@ -1,9 +1,6 @@
 package cga.framework
 
-import cga.exercise.components.geometry.Material
-import cga.exercise.components.geometry.Mesh
-import cga.exercise.components.geometry.Renderable
-import cga.exercise.components.geometry.VertexAttribute
+import cga.exercise.components.geometry.*
 import cga.exercise.components.texture.Texture2D
 import org.joml.Matrix3f
 import org.joml.Vector2f
@@ -161,7 +158,7 @@ object ModelLoader {
         }
         // materials
         for (i in model.materials.indices) {
-            materials.add(Material(textures[model.materials[i].diffTexIndex],
+            materials.add(MaterialInternship(textures[model.materials[i].diffTexIndex], //CHANGE by Paul
                                     textures[model.materials[i].emitTexIndex],
                                     textures[model.materials[i].specTexIndex],
                                     model.materials[i].shininess,

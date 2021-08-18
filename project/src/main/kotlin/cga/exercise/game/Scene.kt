@@ -35,6 +35,10 @@ class Scene(private val window: GameWindow) {
     private val tile003WALL : Renderable
     private val tile003WATER : Renderable
 
+    private val isoCam : TronCamera
+    private val isoCamAnchor = Transformable()
+    private val isoCamAnchor2 = Transformable()
+
     init {
         /* initial opengl state */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -120,6 +124,18 @@ class Scene(private val window: GameWindow) {
         debugCam = TronCamera(parent = tile003BENCH)
         debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         debugCam.translateLocal(Vector3f(0.0f, 0.0f, 10.0f))
+
+        /* sara */
+        isoCamAnchor.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor.translateLocal(Vector3f(100.0f, 0.0f, 100.0f))
+        isoCamAnchor.rotateLocal(0f, toRadians(45f), 0f)
+        isoCamAnchor2.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor2.translateLocal(Vector3f(100.0f, 0.0f, -100.0f))
+        isoCamAnchor2.rotateLocal(0f, toRadians(135f), 0f)
+
+        isoCam = TronCamera(parent = isoCamAnchor)
+        isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
+        isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -127,7 +143,8 @@ class Scene(private val window: GameWindow) {
 
         /* shader.use | camera.bind | light.bind | mesh.render */
         debugShader.use()
-        debugCam.bind(debugShader)
+        //debugCam.bind(debugShader)
+        isoCam.bind(debugShader)
 
         tile003GROUND.render(debugShader)
         tile003WATER.render(debugShader)
@@ -153,7 +170,13 @@ class Scene(private val window: GameWindow) {
                 //someRotation
         }*/
 
-        // add changes due to time here
+        /* rotate isometric camera */
+        if(window.getKeyState(GLFW_KEY_1)) {
+            isoCam.parent = isoCamAnchor
+        }
+        if(window.getKeyState(GLFW_KEY_2)) {
+            isoCam.parent = isoCamAnchor2
+        }
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
@@ -162,6 +185,7 @@ class Scene(private val window: GameWindow) {
     //var lastMousePosY : Double = 0.0
 
     fun onMouseMove(xpos: Double, ypos: Double) {
+        /**
         //val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
         val yaw = (lastMousePosX - xpos).toFloat() * 0.001f
         val roll = 0.0f
@@ -169,6 +193,11 @@ class Scene(private val window: GameWindow) {
         debugCam.rotateAroundPoint(0.0f, yaw, roll, Vector3f(0.0f))
         lastMousePosX = xpos
         //lastMousePosY = ypos
+        */
+    }
+
+    fun onMouseScroll(xoffset: Double, yoffset: Double) {
+        isoCam.translateLocal(Vector3f(0.0f , 0.0f , -2*yoffset.toFloat()))
     }
 
     fun cleanup() {

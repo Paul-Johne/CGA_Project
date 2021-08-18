@@ -31,6 +31,7 @@ class Scene(private val window: GameWindow) {
     private val debugCam : TronCamera // => UNUSED
     private val isoCam : TronCamera
 
+    private val cubeMap : Renderable
     private val skybox : Renderable
 
     private val tile003BENCH : Renderable
@@ -121,6 +122,8 @@ class Scene(private val window: GameWindow) {
         val attribPosCube : VertexAttribute = VertexAttribute(3, GL_FLOAT, 20, 0)
         val attribTexCube : VertexAttribute = VertexAttribute(2, GL_FLOAT, 20, 12)
         val cubeAttribs = arrayOf(attribPosCube, attribTexCube)
+
+        cubeMap = Renderable(mutableListOf(Mesh(cubeVBO, cubeIBO, cubeAttribs, null)))
 
         /* CubeMap - Skybox */
         val skyboxVBO = floatArrayOf(
@@ -229,7 +232,14 @@ class Scene(private val window: GameWindow) {
     fun render(dt: Float, t: Float) {
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT)
 
-        /* shader.use | camera.bind | light.bind | mesh.render */
+        glDepthFunc(GL_LEQUAL)
+        skyShader.use()
+        skyShader.setUniform("view_matrix", Matrix4f(isoCam.getCalculateProjectionMatrix()), false)
+        skyShader.setUniform("projection_matrix", Matrix4f(), false)
+        skyboxTex.bind(0, skyShader)
+        skybox.render(skyShader)
+        glDepthFunc(GL_LESS)
+
         debugShader.use()
         //debugCam.bind(debugShader)
         isoCam.bind(debugShader)
@@ -285,7 +295,7 @@ class Scene(private val window: GameWindow) {
     }
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
-        isoCam.translateLocal(Vector3f(0.0f , 0.0f , -2*yoffset.toFloat()))
+        isoCam.translateLocal(Vector3f(0.0f , 0.0f , -20*yoffset.toFloat()))
     }
 
     fun cleanup() {

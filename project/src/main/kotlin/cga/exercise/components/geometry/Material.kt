@@ -32,7 +32,9 @@ class MaterialInternship(var diff: Texture2D,
     }
 
     fun unbind() {
-        emit.unbind() // Ist das Kunst oder kann das weg?
+        diff.unbind()
+        emit.unbind()
+        specular.unbind()
     }
 }
 

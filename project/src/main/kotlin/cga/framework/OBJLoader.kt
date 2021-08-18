@@ -8,9 +8,6 @@ import java.io.File
 import java.io.FileInputStream
 import java.util.*
 
-/**
- * Created by Fabian on 16.09.2017.
- */
 object OBJLoader {
 
     private const val OBJECT_SHELL_SIZE = 8
@@ -110,6 +107,7 @@ object OBJLoader {
             if (!scanner.hasNext()) throw OBJException("Error parsing Object.")
             if (scanner.hasNext("o")) {
                 command = scanner.next()
+                obj.isWall = isWall(scanner.next()) // Checks for o-attributes name
                 if (scanner.hasNextLine()) obj.name = scanner.nextLine().trim { it <= ' ' } else throw OBJException("Error parsing object name.")
             } else {
                 obj.name = "UNNAMED"
@@ -374,6 +372,8 @@ object OBJLoader {
         var name: String = ""
         var meshes: MutableList<OBJMesh> = mutableListOf()
 
+        var isWall: Boolean = false
+
         fun recenter() {
             val max = Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE).mul(-1.0f)
             val min = Vector3f(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE)
@@ -456,5 +456,13 @@ object OBJLoader {
 
     private class Face {
         var verts: MutableList<VertexDef> = mutableListOf()
+    }
+
+    fun isWall(objName: String, detector : Regex = "wall".toRegex()): Boolean {
+        if (detector.containsMatchIn(objName)) {
+            println("$objName is a wall.")
+            return true
+        }
+        return false
     }
 }

@@ -6,18 +6,24 @@ import org.joml.Vector2f
 import org.joml.Vector3f
 import org.joml.Vector3i
 
-class Material(var diff: Texture2D,
-               var emit: Texture2D,
-               var specular: Texture2D,
-               var shininess: Float = 50.0f,
-               var tcMultiplier : Vector2f = Vector2f(1.0f),
-               var emitColor : Vector3i = Vector3i(255)) {  //ermöglicht Angabe zur Wiederholung einer Textur in s und t Richtung
+sealed class Material () {
+    abstract fun bind(shaderProgram: ShaderProgram)
+}
 
-    fun bind(shaderProgram: ShaderProgram) {
-        shaderProgram.setUniform("tcMultiplier",tcMultiplier)
+class MaterialInternship(var diff: Texture2D,
+                         var emit: Texture2D,
+                         var specular: Texture2D,
+                         var shininess: Float = 50.0f,
+                         var tcMultiplier : Vector2f = Vector2f(1.0f),
+                         var emitColor : Vector3i = Vector3i(255)) : Material() {  //ermöglicht Angabe zur Wiederholung einer Textur in s und t Richtung
+
+    override fun bind(shaderProgram: ShaderProgram) {
+        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+
         diff.bind(0)
         emit.bind(1)
         specular.bind(2)
+
         shaderProgram.setUniform("diffTex", 0)
         shaderProgram.setUniform("emitTex",1)
         shaderProgram.setUniform("specTex", 2)
@@ -26,6 +32,30 @@ class Material(var diff: Texture2D,
     }
 
     fun unbind() {
+        diff.unbind()
         emit.unbind()
+        specular.unbind()
+    }
+}
+
+class MaterialTiles(var diffPalette: Texture2D,
+                    var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
+
+    override fun bind(shaderProgram: ShaderProgram) {
+        diffPalette.bind(3) // same textureUnit as MaterialWall
+
+        shaderProgram.setUniform("diffPalette", 3)
+        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+    }
+}
+
+class MaterialWall(var diffWall: Texture2D,
+                   var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
+
+    override fun bind(shaderProgram: ShaderProgram) {
+        diffWall.bind(3) // same textureUnit as MaterialTiles
+
+        shaderProgram.setUniform("diffWall", 4)
+        shaderProgram.setUniform("tcMultiplier", tcMultiplier)
     }
 }

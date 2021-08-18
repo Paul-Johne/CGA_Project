@@ -7,7 +7,7 @@ import org.joml.Vector3f
  *  changed var parent to val parent
  *  modelMatrix => V = View Transformation
  */
-open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), val parent: Transformable? = null) {
+open class Transformable(var modelMatrix: Matrix4f = Matrix4f(), var parent: Transformable? = null) {
 
     /**
      * Rotates object around its own origin.

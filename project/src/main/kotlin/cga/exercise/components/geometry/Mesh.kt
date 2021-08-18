@@ -13,7 +13,7 @@ import org.lwjgl.opengl.*
  * @throws Exception If the creation of the required OpenGL objects fails, an exception is thrown
  *
  */
-class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material : Material) {
+class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<VertexAttribute>, val material : Material?) {
     //private data
     private var vao = 0
     private var vbo = 0
@@ -59,7 +59,7 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
     }
 
     fun render(shaderProgram: ShaderProgram){
-        material.bind(shaderProgram)
+        material?.bind(shaderProgram)
         render()
         //material.unbind()
     }
@@ -68,8 +68,8 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
      * Deletes the previously allocated OpenGL objects for this mesh
      */
     fun cleanup() {
-        if (ibo != 0) GL15.glDeleteBuffers(ibo)
-        if (vbo != 0) GL15.glDeleteBuffers(vbo)
-        if (vao != 0) GL30.glDeleteVertexArrays(vao)
+        if (ibo != 0) glDeleteBuffers(ibo)
+        if (vbo != 0) glDeleteBuffers(vbo)
+        if (vao != 0) glDeleteVertexArrays(vao)
     }
 }

@@ -1,15 +1,14 @@
 package cga.exercise.components.texture
 
-import cga.framework.GLError
-import cga.framework.GLError.checkEx
 import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL33.*
 import org.lwjgl.stb.STBImage
 import java.nio.ByteBuffer
+/**
+import cga.framework.GLError
+import cga.framework.GLError.checkEx
+ */
 
 class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Boolean): ITexture{
     private var texID: Int = -1
@@ -29,8 +28,10 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
             val x = BufferUtils.createIntBuffer(1)
             val y = BufferUtils.createIntBuffer(1)
             val readChannels = BufferUtils.createIntBuffer(1)
+
             //flip y coordinate to make OpenGL happy
             STBImage.stbi_set_flip_vertically_on_load(true)
+
             val imageData = STBImage.stbi_load(path, x, y, readChannels, 4)
                     ?: throw Exception("Image file \"" + path + "\" couldn't be read:\n" + STBImage.stbi_failure_reason())
 
@@ -59,14 +60,17 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
 
     override fun setTexParams(wrapS: Int, wrapT: Int, minFilter: Int, magFilter: Int) {
         glBindTexture(GL_TEXTURE_2D, texID)
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrapS) // wrapS -> GL_CLAMP/REPEAT
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapT) // wrapT -> GL_CLAMP/REPEAT
+
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, magFilter)
 
+        /* preserving the perception of sharpness*/
         glTexParameterf(GL_TEXTURE_2D,
                 EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                16.0f) // bewahrt Schärfeeindruck
+                16.0f)
 
         glBindTexture(GL_TEXTURE_2D, 0)
     }
@@ -83,7 +87,7 @@ class Texture2D(imageData: ByteBuffer, width: Int, height: Int, genMipMaps: Bool
     override fun cleanup() {
         unbind()
         if (texID != 0) {
-            GL11.glDeleteTextures(texID)
+            glDeleteTextures(texID)
             texID = 0
         }
     }

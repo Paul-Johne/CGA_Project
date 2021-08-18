@@ -8,7 +8,6 @@ import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
 import cga.framework.OBJLoader
-import cga.framework.Vertex
 import org.lwjgl.opengl.GL33.*
 import org.joml.*
 import org.joml.Math.toRadians
@@ -18,8 +17,6 @@ import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
 import javax.sound.sampled.FloatControl
-
-const val SIZE : Float = 1.0f
 
 class Scene(private val window: GameWindow) {
 
@@ -42,6 +39,7 @@ class Scene(private val window: GameWindow) {
 
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
+    private val skyboxRotator = Transformable()
 
     init {
         /* initial opengl state */
@@ -84,7 +82,7 @@ class Scene(private val window: GameWindow) {
         skyboxTex = CubeMap(cubeFaces, false)
         skyboxTex.setTexParams()
 
-        /* CubeMap - Cube */
+        /* CubeMap - Cube => UNUSED */
         val cubeVBO = floatArrayOf(
                 // pos, pos, pos, texCoord, texCoord
                 -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // 0
@@ -212,11 +210,11 @@ class Scene(private val window: GameWindow) {
         tile003WATER = Renderable(mutableListOf(tile003MeshList[4]))
 
         /* implemented camera */
-        debugCam = TronCamera(parent = tile003BENCH)
+        debugCam = TronCamera(parent = null)
         debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         debugCam.translateLocal(Vector3f(0.0f, 0.0f, 10.0f))
 
-        /* sara */
+        /* anchors */
         isoCamAnchor.scaleLocal(Vector3f(0.1f))
         isoCamAnchor.translateLocal(Vector3f(100.0f, 0.0f, 100.0f))
         isoCamAnchor.rotateLocal(0f, toRadians(45f), 0f)
@@ -234,8 +232,8 @@ class Scene(private val window: GameWindow) {
 
         glDepthFunc(GL_LEQUAL)
         skyShader.use()
-        skyShader.setUniform("view_matrix", Matrix4f(isoCam.getCalculateProjectionMatrix()), false)
-        skyShader.setUniform("projection_matrix", Matrix4f(), false)
+        skyShader.setUniform("view_matrix", Matrix4f(), false)
+        skyShader.setUniform("projection_matrix", skyboxRotator.modelMatrix, false)
         skyboxTex.bind(0, skyShader)
         skybox.render(skyShader)
         glDepthFunc(GL_LESS)
@@ -296,6 +294,7 @@ class Scene(private val window: GameWindow) {
 
     fun onMouseScroll(xoffset: Double, yoffset: Double) {
         isoCam.translateLocal(Vector3f(0.0f , 0.0f , -20*yoffset.toFloat()))
+        skyboxRotator.rotateLocal(0.0f, Math.toRadians(10.0f), 0.0f) // better: skyboxRotator.modelMatrix = anchor.modelMatrix
     }
 
     fun cleanup() {

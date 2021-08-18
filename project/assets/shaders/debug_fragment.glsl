@@ -18,7 +18,4 @@ void main() {
 
     color += vec4(diffPaletteTerm, 0.0f);
     color += vec4(diffWallTerm, 0.0f);
-
-    diffPaletteTerm = vec3(0.0f, 0.0f, 0.0f).rgb;
-    diffWallTerm = vec3(0.0f, 0.0f, 0.0f).rgb;
 }

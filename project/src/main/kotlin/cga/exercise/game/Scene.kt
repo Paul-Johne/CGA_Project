@@ -87,27 +87,28 @@ class Scene(private val window: GameWindow) {
 
         // tile???Data[OBJECT][MESH] ==> MutableList<Mesh>
         val tile003MeshList : MutableList<Mesh> = mutableListOf()
-        var counter : Int = 0
+        var objectCounter : Int = 0
+
         for (tileObject in tile003Data) {
             for((meshes, _) in tileObject.withIndex()) {
 
-                if (tile003IsWall[counter]) {
+                if (tile003IsWall[objectCounter]) {
                     println("Wall detected")
                     tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
                                              tileObject[meshes].indexData,
                                              objAttribs, wallMat))
-                    counter += 1
+                    objectCounter += 1
                 } else {
                     println("Tile detected")
                     tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
                                              tileObject[meshes].indexData,
                                              objAttribs, tileMat))
-                    counter += 1
+                    objectCounter += 1
                 }
 
             }
         }
-        counter = 0 // resetting counter for next tile
+        objectCounter = 0 // resetting counter for next tile
 
         tile003BENCH = Renderable(mutableListOf(tile003MeshList[0]))
         tile003GROUND = Renderable(mutableListOf(tile003MeshList[1]))
@@ -158,16 +159,16 @@ class Scene(private val window: GameWindow) {
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
 
     var lastMousePosX : Double = 0.0
-    var lastMousePosY : Double = 0.0
+    //var lastMousePosY : Double = 0.0
 
     fun onMouseMove(xpos: Double, ypos: Double) {
-        val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
+        //val pitch = (lastMousePosY - ypos).toFloat() * 0.001f
         val yaw = (lastMousePosX - xpos).toFloat() * 0.001f
         val roll = 0.0f
 
         debugCam.rotateAroundPoint(0.0f, yaw, roll, Vector3f(0.0f))
         lastMousePosX = xpos
-        lastMousePosY = ypos
+        //lastMousePosY = ypos
     }
 
     fun cleanup() {

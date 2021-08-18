@@ -15,6 +15,7 @@ import org.lwjgl.opengl.EXTTextureFilterAnisotropic
 class CubeMap(imageDataArray: ArrayList<ByteBuffer>, width: Int, height: Int, genMipMaps: Boolean){
     private var texID: Int = -1
 
+    /* used after invoke operation */
     init {
         try {
             loadTexture(imageDataArray, width, height, genMipMaps)
@@ -22,6 +23,7 @@ class CubeMap(imageDataArray: ArrayList<ByteBuffer>, width: Int, height: Int, ge
             ex.printStackTrace()
         }
     }
+
     companion object {
         //create texture from file
         //don't support compressed textures for now
@@ -63,7 +65,7 @@ class CubeMap(imageDataArray: ArrayList<ByteBuffer>, width: Int, height: Int, ge
         var i = 0
         for(imageData in imageDataArray){
 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,0,GL_RGB,width,height,0,GL_RGB,GL_UNSIGNED_BYTE,imageData) //GL_TEXTURE_CUBE_MAP_POSITIVE_X + i
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData)
 
             if(genMipMaps){
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i)

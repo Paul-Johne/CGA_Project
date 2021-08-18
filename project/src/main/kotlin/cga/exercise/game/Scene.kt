@@ -2,40 +2,43 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
-import cga.exercise.components.light.PointLight
-import cga.exercise.components.light.SpotLight
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.texture.CubeMap
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
 import cga.framework.GameWindow
-import cga.framework.ModelLoader
 import cga.framework.OBJLoader
+import cga.framework.Vertex
 import org.lwjgl.opengl.GL33.*
 import org.joml.*
 import org.joml.Math.toRadians
 import org.lwjgl.glfw.GLFW.*
-import java.awt.Point
-import javax.xml.crypto.dsig.Transform
-import kotlin.system.exitProcess
 import java.io.File
-import java.io.ObjectInput
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
 import javax.sound.sampled.FloatControl
 
+const val SIZE : Float = 1.0f
+
 class Scene(private val window: GameWindow) {
 
     private val debugShader : ShaderProgram
+    private val skyShader : ShaderProgram
 
-    private val debugCam : TronCamera
+    private val skyboxTex : CubeMap
+
+    private val debugCam : TronCamera // => UNUSED
+    private val isoCam : TronCamera
+
+    private val skybox : Renderable
+
     private val tile003BENCH : Renderable
     private val tile003GROUND : Renderable
     private val tile003TREE : Renderable
     private val tile003WALL : Renderable
     private val tile003WATER : Renderable
 
-    private val isoCam : TronCamera
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
 
@@ -56,6 +59,7 @@ class Scene(private val window: GameWindow) {
 
         /* initialized ShaderPrograms */
         debugShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
+        skyShader = ShaderProgram("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
@@ -65,6 +69,90 @@ class Scene(private val window: GameWindow) {
         val gainControl : FloatControl = clip.getControl(FloatControl.Type.MASTER_GAIN) as FloatControl
         gainControl.value = -12.0f // decreased by 12dB => (1/4 of default volume)
         clip.start()
+
+        /* CubeMap - Textures */
+        val cubeFaces = arrayListOf<String>(
+                "assets/textures/CubeMap/1left.png",
+                "assets/textures/CubeMap/2right.png",
+                "assets/textures/CubeMap/3bottom.png",
+                "assets/textures/CubeMap/4top.png",
+                "assets/textures/CubeMap/5back.png",
+                "assets/textures/CubeMap/6front.png"
+        )
+
+        skyboxTex = CubeMap(cubeFaces, false)
+        skyboxTex.setTexParams()
+
+        /* CubeMap - Cube */
+        val cubeVBO = floatArrayOf(
+                // pos, pos, pos, texCoord, texCoord
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // 0
+                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // 1
+                 0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 2
+                -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, // 3
+                -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 4
+                 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // 5
+                 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // 6
+                -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, // 7
+                -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 8
+                -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 9
+                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 10
+                 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 11
+                 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 12
+                 0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 13
+                 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // 14
+                -0.5f,  0.5f,  0.5f, 0.0f, 0.0f  // 15
+        )
+        val cubeIBO = intArrayOf(
+                0, 1, 2,
+                2, 3, 0,
+                4, 5, 6,
+                6, 7, 4,
+                8, 9, 10,
+                10, 4, 8,
+                11, 2, 12,
+                12, 13, 11,
+                10, 14, 5,
+                5, 4, 10,
+                3, 2, 11,
+                11, 15, 3
+        )
+
+        val attribPosCube : VertexAttribute = VertexAttribute(3, GL_FLOAT, 20, 0)
+        val attribTexCube : VertexAttribute = VertexAttribute(2, GL_FLOAT, 20, 12)
+        val cubeAttribs = arrayOf(attribPosCube, attribTexCube)
+
+        /* CubeMap - Skybox */
+        val skyboxVBO = floatArrayOf(
+                // pos, pos, pos
+                -1.0f,  1.0f, -1.0f,//0
+                -1.0f, -1.0f, -1.0f,//1
+                 1.0f, -1.0f, -1.0f,//2
+                 1.0f,  1.0f, -1.0f,//3
+                -1.0f, -1.0f,  1.0f,//4
+                -1.0f,  1.0f,  1.0f,//5
+                 1.0f, -1.0f,  1.0f,//6
+                 1.0f,  1.0f,  1.0f//7
+        )
+        val skyboxIBO = intArrayOf(
+                0, 1, 2,
+                2, 3, 0,
+                4, 1, 0,
+                0, 5, 4,
+                2, 6, 7,
+                7, 3, 2,
+                4, 5, 7,
+                7, 6, 4,
+                0, 3, 7,
+                7, 5, 0,
+                1, 4, 2,
+                2, 4, 6
+        )
+
+        val attribPosSky : VertexAttribute = VertexAttribute(3, GL_FLOAT, 12, 0)
+        val skyboxAttribs = arrayOf(attribPosSky)
+
+        skybox = Renderable(mutableListOf(Mesh(skyboxVBO, skyboxIBO, skyboxAttribs, null)))
 
         /* Texture2Ds for Object-Materials */
         val diffPalette01 = Texture2D("assets/textures/diffuse_palette01.png", true)
@@ -204,4 +292,10 @@ class Scene(private val window: GameWindow) {
         // executed when gane is closed
         println("cleanup..")
     }
+
+    fun detectCollision(a : Renderable, b : Renderable, a_width : Float, a_length : Float, b_width : Float, b_length : Float) : Boolean =
+            (((a.getPosition().x - a_width <= b.getPosition().x + b_width) &&
+              (a.getPosition().x + a_width >= b.getPosition().x - b_width)) &&
+             ((a.getPosition().z - a_length <= b.getPosition().z + b_length) &&
+              (a.getPosition().z + a_length >= b.getPosition().z - b_length)))
 }

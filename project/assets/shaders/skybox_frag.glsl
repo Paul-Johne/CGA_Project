@@ -4,11 +4,10 @@
 out vec4 color;
 
 in vec3 textureCoordinates;
-
-uniform samplerCube skybox;
+uniform samplerCube skybox; //uploaded in CubeMap.bind()
 
 void main(){
 
-    color = textureCube(skybox,textureCoordinates);
+    color = textureCube(skybox, textureCoordinates);
 
 }

@@ -22,6 +22,7 @@ class Scene(private val window: GameWindow) {
 
     private val debugShader : ShaderProgram
     private val skyShader : ShaderProgram
+    private val waterShader : ShaderProgram
 
     private val skyboxTex : CubeMap
 
@@ -63,6 +64,7 @@ class Scene(private val window: GameWindow) {
         /* initialized ShaderPrograms */
         debugShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
         skyShader = ShaderProgram("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
+        waterShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/water_fragment.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
@@ -247,10 +249,13 @@ class Scene(private val window: GameWindow) {
         isoCam.bind(debugShader)
 
         tile003GROUND.render(debugShader)
-        tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
         tile003TREE.render(debugShader)
         tile003WALL.render(debugShader)
+
+        waterShader.use()
+        isoCam.bind(waterShader)
+        tile003WATER.render(waterShader)
     }
 
     fun update(dt: Float, t: Float) {
@@ -291,6 +296,18 @@ class Scene(private val window: GameWindow) {
         }
         if(window.getKeyState(GLFW_KEY_2)) {
             isoCam.parent = isoCamAnchor2
+        }
+
+        if(window.getKeyState(GLFW_KEY_P)){
+            debugShader.setUniform("shaderType",0)
+            waterShader.setUniform("shaderType",0)
+        }
+        if(window.getKeyState(GLFW_KEY_G)){
+            debugShader.setUniform("shaderType",1)
+            waterShader.setUniform("shaderType",1)
+        }
+        if(window.getKeyState(GLFW_KEY_T)){
+            debugShader.setUniform("shaderType",2)
         }
     }
 

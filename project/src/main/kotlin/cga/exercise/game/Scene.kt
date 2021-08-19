@@ -254,6 +254,8 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
+        /* Hier wird nach der "Vorwärts/Rückwärts"-Abfrage eine weitere Abfrage gestellt, die dafür sorgt, dass solange keine Kollision zwischen LIGHTCYCLE
+        * und TILEONE stattfindet, das LIGHTCYCLE vorwärts fährt. Wenn eine Kollision stattfindet, dann wird das LIGHCYCLE um 173f nach hinten versetzt. */
         /**
         if(lightCycle != null){
             if(window.getKeyState(GLFW_KEY_W)) {

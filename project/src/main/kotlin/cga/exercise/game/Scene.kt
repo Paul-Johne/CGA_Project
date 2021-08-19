@@ -50,6 +50,9 @@ class Scene(private val window: GameWindow) {
         glCullFace(GL_BACK); GLError.checkThrow()
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()
         glDepthFunc(GL_LESS); GLError.checkThrow()
+        glEnable(GL_BLEND); GLError.checkThrow()
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); GLError.checkThrow()
+        glBlendEquation(GL_FUNC_ADD); GLError.checkThrow()
 
         /* attributes for each object loaded by OBJLoader */
         val attribPositionOBJ : VertexAttribute = VertexAttribute(3, GL_FLOAT, 32, 0)
@@ -252,19 +255,32 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         /**
-        if(window.getKeyState(GLFW_KEY_W)) {
-            //someTransformation
+        if(lightCycle != null){
+            if(window.getKeyState(GLFW_KEY_W)) {
+                if(!detectCollision(lightCycle, tileOne, 0.5f, 1.5f, 5.0f, 5.0f)){
+                    lightCycle.translateLocal(Vector3f(0f, 0f, -5f * dt))
+                }
+                else{
+                    lightCycle.translateLocal(Vector3f(0f, 0f, 1/3f))
+                }
             if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
+                lightCycle.rotateLocal(0f, 5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
-        }
-        if(window.getKeyState(GLFW_KEY_S)) {
-            //someTransformation
+                lightCycle.rotateLocal(0f, -5f * dt, 0f)
+            }
+        else if(window.getKeyState(GLFW_KEY_S)) {
+            if(!detectCollision(lightCycle, tileOne, 0.5f, 1.5f, 5.0f, 5.0f)){
+                lightCycle.translateLocal(Vector3f(0f, 0f, 5.0f * dt))
+            }
+            else{
+                lightCycle.translateLocal(Vector3f(0f, 0f, -1/3f))
+            }
             if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
+                lightCycle.rotateLocal(0f, -1.5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
+                lightCycle.rotateLocal(0f, 1.5f * dt, 0f)
+            }
+
         }*/
 
         /* rotate isometric camera */

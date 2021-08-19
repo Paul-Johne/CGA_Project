@@ -45,6 +45,7 @@ class Scene(private val window: GameWindow) {
         /* initial opengl state */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
         glEnable(GL_CULL_FACE); GLError.checkThrow()
+        glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS); GLError.checkThrow()
         glFrontFace(GL_CCW); GLError.checkThrow()
         glCullFace(GL_BACK); GLError.checkThrow()
         glEnable(GL_DEPTH_TEST); GLError.checkThrow()

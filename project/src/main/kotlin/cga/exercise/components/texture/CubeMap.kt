@@ -65,7 +65,7 @@ class CubeMap(imageDataArray: ArrayList<ByteBuffer>, width: Int, height: Int, ge
         var i = 0
         for(imageData in imageDataArray){
 
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, imageData)
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData)
 
             if(genMipMaps){
                 glGenerateMipmap(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i)

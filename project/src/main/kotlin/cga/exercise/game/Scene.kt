@@ -39,6 +39,9 @@ class Scene(private val window: GameWindow) {
 
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
+    private val isoCamAnchor3 = Transformable()
+    private val isoCamAnchor4 = Transformable()
+    private val isoCamList = mutableListOf<Transformable>()
     private val skyboxRotator = Transformable()
 
     init {
@@ -214,15 +217,25 @@ class Scene(private val window: GameWindow) {
         debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         debugCam.translateLocal(Vector3f(0.0f, 0.0f, 10.0f))
 
-        /* anchors */
+        /* anchors & isometric camera */
         isoCamAnchor.scaleLocal(Vector3f(0.1f))
         isoCamAnchor.translateLocal(Vector3f(100.0f, 0.0f, 100.0f))
         isoCamAnchor.rotateLocal(0f, toRadians(45f), 0f)
         isoCamAnchor2.scaleLocal(Vector3f(0.1f))
         isoCamAnchor2.translateLocal(Vector3f(100.0f, 0.0f, -100.0f))
         isoCamAnchor2.rotateLocal(0f, toRadians(135f), 0f)
+        isoCamAnchor3.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor3.translateLocal(Vector3f(-100.0f, 0.0f, -100.0f))
+        isoCamAnchor3.rotateLocal(0f, toRadians(225f), 0f)
+        isoCamAnchor4.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor4.translateLocal(Vector3f(-100.0f, 0.0f, 100.0f))
+        isoCamAnchor4.rotateLocal(0f, toRadians(315f), 0f)
+        isoCamList.add(isoCamAnchor)
+        isoCamList.add(isoCamAnchor2)
+        isoCamList.add(isoCamAnchor3)
+        isoCamList.add(isoCamAnchor4)
 
-        isoCam = TronCamera(parent = isoCamAnchor)
+        isoCam = TronCamera(parent = isoCamList[0], place = 0)
         isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
     }
@@ -266,16 +279,28 @@ class Scene(private val window: GameWindow) {
                 //someRotation
         }*/
 
-        /* rotate isometric camera */
-        if(window.getKeyState(GLFW_KEY_1)) {
-            isoCam.parent = isoCamAnchor
-        }
-        if(window.getKeyState(GLFW_KEY_2)) {
-            isoCam.parent = isoCamAnchor2
-        }
+
     }
 
-    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
+        /* rotate isometric camera */
+        if(window.getKeyState(GLFW_KEY_1)) {
+            if (isoCam.place < 3) {
+                isoCam.place++
+            } else {
+                isoCam.place = 0
+            }
+            isoCam.parent = isoCamList[isoCam.place]
+        }
+        if(window.getKeyState(GLFW_KEY_2)) {
+            if (isoCam.place != 0) {
+                isoCam.place--
+            } else {
+                isoCam.place = 3
+            }
+            isoCam.parent = isoCamList[isoCam.place]
+        }
+    }
 
     var lastMousePosX : Double = 0.0
     //var lastMousePosY : Double = 0.0

@@ -46,6 +46,14 @@ class Scene(private val window: GameWindow) {
     private val skyboxRotator = Transformable()
 
     private val player : Player
+    private val tile001 : Tile
+    private val tile002 : Tile
+    private val tile003 : Tile
+    private val tile004 : Tile
+    private val tile005 : Tile
+    private val tile006 : Tile
+    private val tile007 : Tile
+    private val tile008 : Tile
 
 
     init {
@@ -243,6 +251,24 @@ class Scene(private val window: GameWindow) {
         isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
 
+        /* tiles */
+        tile001 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile001.obj"), objAttribs, tileMat, wallMat)
+        tile002 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile002.obj"), objAttribs, tileMat, wallMat)
+        tile003 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile003.obj"), objAttribs, tileMat, wallMat)
+        tile004 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile004.obj"), objAttribs, tileMat, wallMat)
+        tile005 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile005.obj"), objAttribs, tileMat, wallMat)
+        tile006 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile006.obj"), objAttribs, tileMat, wallMat)
+        tile007 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile007.obj"), objAttribs, tileMat, wallMat)
+        tile008 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile008.obj"), objAttribs, tileMat, wallMat)
+        tile001?.translateLocal(Vector3f(-10f, 0f, -10f))
+        tile002?.translateLocal(Vector3f(0f, 0f, -10f))
+        tile003?.translateLocal(Vector3f(10f, 0f, -10f))
+        tile004?.translateLocal(Vector3f(-10f, 0f, 0f))
+        tile005?.translateLocal(Vector3f(0f, 0f, 0f))
+        tile006?.translateLocal(Vector3f(10f, 0f, 0f))
+        tile007?.translateLocal(Vector3f(-10f, 0f, 10f))
+        tile008?.translateLocal(Vector3f(0f, 0f, 10f))
+
         /* player */
         player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
         player.translateLocal(Vector3f(0f, 1f, 0f))
@@ -263,11 +289,14 @@ class Scene(private val window: GameWindow) {
         //debugCam.bind(debugShader)
         isoCam.bind(debugShader)
 
-        tile003GROUND.render(debugShader)
-        tile003BENCH.render(debugShader)
-        tile003TREE.render(debugShader)
-        tile003WALL.render(debugShader)
-        tile003WATER.render(debugShader)
+        tile001.render(debugShader)
+        tile002.render(debugShader)
+        tile003.render(debugShader)
+        tile004.render(debugShader)
+        tile005.render(debugShader)
+        tile006.render(debugShader)
+        tile007.render(debugShader)
+        tile008.render(debugShader)
         player.render(debugShader)
     }
 

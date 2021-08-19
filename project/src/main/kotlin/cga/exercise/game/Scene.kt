@@ -13,6 +13,7 @@ import org.joml.*
 import org.joml.Math.toRadians
 import org.lwjgl.glfw.GLFW.*
 import java.io.File
+import java.util.*
 import javax.sound.sampled.AudioInputStream
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.Clip
@@ -43,6 +44,9 @@ class Scene(private val window: GameWindow) {
     private val isoCamAnchor4 = Transformable()
     private val isoCamList = mutableListOf<Transformable>()
     private val skyboxRotator = Transformable()
+
+    private val player : Player
+
 
     init {
         /* initial opengl state */
@@ -238,6 +242,10 @@ class Scene(private val window: GameWindow) {
         isoCam = TronCamera(parent = isoCamList[0], place = 0)
         isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
+
+        /* player */
+        player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
+        player.translateLocal(Vector3f(0f, 1f, 0f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -256,28 +264,31 @@ class Scene(private val window: GameWindow) {
         isoCam.bind(debugShader)
 
         tile003GROUND.render(debugShader)
-        tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
         tile003TREE.render(debugShader)
         tile003WALL.render(debugShader)
+        tile003WATER.render(debugShader)
+        player.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {
-        /**
+        /* player movement*/
         if(window.getKeyState(GLFW_KEY_W)) {
-            //someTransformation
+            player?.translateLocal(Vector3f(-5f* dt, 0f, 0f))
             if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
+                player?.rotateLocal(0f, 5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
+                player?.rotateLocal(0f, -5f * dt, 0f)
         }
         if(window.getKeyState(GLFW_KEY_S)) {
-            //someTransformation
+            player?.translateLocal(Vector3f(1.5f * dt, 0f, 0f))
             if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
+                player?.rotateLocal(0f, -1.5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
-        }*/
+                player?.rotateLocal(0f, 1.5f * dt, 0f)
+        }
+
+
 
 
     }

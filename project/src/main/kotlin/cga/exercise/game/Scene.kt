@@ -290,6 +290,10 @@ class Scene(private val window: GameWindow) {
                 lightCycle.rotateLocal(0f, 1.5f * dt, 0f)
             }
 
+        }
+        /* Beispiel, wenn Lightcycle über die Klippe fährt*/
+        if(!detectCollision(lightCycle, ground,  0.5f, 1.5f, 24.0f, 24.0f)){
+        lightCycle.translateLocal(Vector3f(0f,-5f * dt, 0f))
         }*/
 
         /* rotate isometric camera */

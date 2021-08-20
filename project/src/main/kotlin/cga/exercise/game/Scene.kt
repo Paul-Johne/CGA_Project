@@ -57,6 +57,8 @@ class Scene(private val window: GameWindow) {
     private var tileList = mutableListOf<Tile?>()
 
     private val empty : EmptySpot
+    private val keyObj : KeyObject
+    private val keyObjGoal : KeyObject
 
 
     init {
@@ -263,14 +265,14 @@ class Scene(private val window: GameWindow) {
         tile006 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile006.obj"), objAttribs, tileMat, wallMat)
         tile007 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile007.obj"), objAttribs, tileMat, wallMat)
         tile008 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile008.obj"), objAttribs, tileMat, wallMat)
-        tile001?.translateLocal(Vector3f(10f, 0f, 10f))
-        tile002?.translateLocal(Vector3f(0f, 0f, -10f))
-        tile003?.translateLocal(Vector3f(10f, 0f, -10f))
-        tile004?.translateLocal(Vector3f(-10f, 0f, 0f))
-        tile005?.translateLocal(Vector3f(0f, 0f, 0f))
-        tile006?.translateLocal(Vector3f(10f, 0f, 0f))
-        tile007?.translateLocal(Vector3f(-10f, 0f, 10f))
-        tile008?.translateLocal(Vector3f(0f, 0f, 10f))
+        tile001.translateLocal(Vector3f(10f, 0f, 10f))
+        tile002.translateLocal(Vector3f(0f, 0f, -10f))
+        tile003.translateLocal(Vector3f(10f, 0f, -10f))
+        tile004.translateLocal(Vector3f(-10f, 0f, 0f))
+        tile005.translateLocal(Vector3f(0f, 0f, 0f))
+        tile006.translateLocal(Vector3f(10f, 0f, 0f))
+        tile007.translateLocal(Vector3f(-10f, 0f, 10f))
+        tile008.translateLocal(Vector3f(0f, 0f, 10f))
         tileList.add(null)
         tileList.add(tile002)
         tileList.add(tile003)
@@ -286,6 +288,13 @@ class Scene(private val window: GameWindow) {
         /* player */
         player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
         player.translateLocal(Vector3f(0f, 1f, 0f))
+
+        keyObj = KeyObject(OBJLoader.loadOBJ("assets/models/cga_key.obj"), objAttribs, tileMat)
+        keyObj.translateLocal(Vector3f(10f, -3f, 0f))
+        //keyObj.scaleLocal(Vector3f(0.5f))
+        keyObjGoal = KeyObject(OBJLoader.loadOBJ("assets/models/cga_keygoal.obj"), objAttribs, tileMat)
+        keyObjGoal.translateLocal(Vector3f(8f, 1.5f, 10f))
+
     }
 
     fun render(dt: Float, t: Float) {
@@ -312,31 +321,32 @@ class Scene(private val window: GameWindow) {
         tile007.render(debugShader)
         tile008.render(debugShader)
         player.render(debugShader)
+        keyObj.render(debugShader)
+        keyObjGoal.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {
         /* player movement*/
 
         if(window.getKeyState(GLFW_KEY_W)) {
-            player?.translateLocal(Vector3f(-5f* dt, 0f, 0f))
+            player.translateLocal(Vector3f(-5f* dt, 0f, 0f))
             if(window.getKeyState(GLFW_KEY_A))
-                player?.rotateLocal(0f, 5f * dt, 0f)
+                player.rotateLocal(0f, 5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                player?.rotateLocal(0f, -5f * dt, 0f)
+                player.rotateLocal(0f, -5f * dt, 0f)
         }
         if(window.getKeyState(GLFW_KEY_S)) {
-            player?.translateLocal(Vector3f(1.5f * dt, 0f, 0f))
+            player.translateLocal(Vector3f(1.5f * dt, 0f, 0f))
             if(window.getKeyState(GLFW_KEY_A))
-                player?.rotateLocal(0f, -1.5f * dt, 0f)
+                player.rotateLocal(0f, -1.5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
-                player?.rotateLocal(0f, 1.5f * dt, 0f)
+                player.rotateLocal(0f, 1.5f * dt, 0f)
         }
 
-
-
-
-
-
+        /* key rotation*/
+        if (!keyObj.getcarried) {
+            keyObj.rotateLocal(0f, -1.5f * dt, 0f)
+        }
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
@@ -417,7 +427,22 @@ class Scene(private val window: GameWindow) {
             }
         }
 
+        /* keyObject */
+        if(window.getKeyState(GLFW_KEY_E)) {
+            if(keyObj.getcarried) {
+                if(player.getPosition().x <= keyObjGoal.getPosition().x+1.5 && player.getPosition().x >= keyObjGoal.getPosition().x-1.5 && player.getPosition().z <= keyObjGoal.getPosition().z+1.5 && player.getPosition().z >= keyObjGoal.getPosition().z-1.5) {
+                    keyObj.getcarried = false
+                    keyObj.atgoal = true
+                    keyObj.translateGlobal(Vector3f(0f, -3f, 0f))
+                }
 
+            } else {
+                if(!keyObj.atgoal && player.getPosition().x <= keyObj.getPosition().x+1.5 && player.getPosition().x >= keyObj.getPosition().x-1.5 && player.getPosition().z <= keyObj.getPosition().z+1.5 && player.getPosition().z >= keyObj.getPosition().z-1.5) {
+                    keyObj.getcarried = true
+                    keyObj.modelMatrix = player.modelMatrix
+                }
+            }
+        }
 
 
     }

@@ -260,11 +260,13 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         /* Hier wird nach der "Vorwärts/Rückwärts"-Abfrage eine weitere Abfrage gestellt, die dafür sorgt, dass solange keine Kollision zwischen LIGHTCYCLE
-        * und TILEONE stattfindet, das LIGHTCYCLE vorwärts fährt. Wenn eine Kollision stattfindet, dann wird das LIGHCYCLE um 173f nach hinten versetzt. */
+        * und TILEONE stattfindet, das LIGHTCYCLE vorwärts fährt. Wenn eine Kollision stattfindet, dann wird das LIGHCYCLE um 173f nach hinten versetzt.
+        * Zu den Parametern. Es werden zwei Renderables und dessen Maße PER HAND angegeben. Die Maße sind die Länge und Breiten der Renderables. NICHT die Höhe!
+        * */
         /**
         if(lightCycle != null){
             if(window.getKeyState(GLFW_KEY_W)) {
-                if(!detectCollision(lightCycle, tileOne, 0.5f, 1.5f, 5.0f, 5.0f)){
+                if(!detectCollision(lightCycle, tileOne, 1.0f, 3.0f, 10.0f, 10.0f)){
                     lightCycle.translateLocal(Vector3f(0f, 0f, -5f * dt))
                 }
                 else{
@@ -276,7 +278,7 @@ class Scene(private val window: GameWindow) {
                 lightCycle.rotateLocal(0f, -5f * dt, 0f)
             }
         else if(window.getKeyState(GLFW_KEY_S)) {
-            if(!detectCollision(lightCycle, tileOne, 0.5f, 1.5f, 5.0f, 5.0f)){
+            if(!detectCollision(lightCycle, tileOne, 1.0f, 3.0f, 10.0f, 10.0f)){
                 lightCycle.translateLocal(Vector3f(0f, 0f, 5.0f * dt))
             }
             else{
@@ -339,8 +341,8 @@ class Scene(private val window: GameWindow) {
     }
 
     fun detectCollision(a : Renderable, b : Renderable, a_width : Float, a_length : Float, b_width : Float, b_length : Float) : Boolean =
-            (((a.getPosition().x - a_width <= b.getPosition().x + b_width) &&
-              (a.getPosition().x + a_width >= b.getPosition().x - b_width)) &&
-             ((a.getPosition().z - a_length <= b.getPosition().z + b_length) &&
-              (a.getPosition().z + a_length >= b.getPosition().z - b_length)))
+            (((a.getPosition().x - a_width / 2 <= b.getPosition().x + b_width / 2) &&
+              (a.getPosition().x + a_width / 2 >= b.getPosition().x - b_width / 2)) &&
+             ((a.getPosition().z - a_length / 2 <= b.getPosition().z + b_length / 2) &&
+              (a.getPosition().z + a_length / 2 >= b.getPosition().z - b_length / 2)))
 }

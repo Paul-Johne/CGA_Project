@@ -2,7 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
-import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.shader.*
 import cga.exercise.components.texture.CubeMap
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -57,8 +57,8 @@ class Scene(private val window: GameWindow) {
         val objAttribs = arrayOf(attribPositionOBJ, attribTextureOBJ, attribNormalOBJ)
 
         /* initialized ShaderPrograms */
-        debugShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
-        skyShader = ShaderProgram("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
+        debugShader = ShaderProgramStandard("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
+        skyShader = ShaderProgramStandard("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
@@ -250,22 +250,6 @@ class Scene(private val window: GameWindow) {
     }
 
     fun update(dt: Float, t: Float) {
-        /**
-        if(window.getKeyState(GLFW_KEY_W)) {
-            //someTransformation
-            if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
-            if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
-        }
-        if(window.getKeyState(GLFW_KEY_S)) {
-            //someTransformation
-            if(window.getKeyState(GLFW_KEY_A))
-                //someRotation
-            if(window.getKeyState(GLFW_KEY_D))
-                //someRotation
-        }*/
-
         /* rotate isometric camera */
         if(window.getKeyState(GLFW_KEY_1)) {
             isoCam.parent = isoCamAnchor

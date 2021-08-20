@@ -1,6 +1,7 @@
 package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
+import org.joml.Matrix3f
 import org.lwjgl.opengl.GL33.*
 import org.lwjgl.opengl.*
 
@@ -58,10 +59,15 @@ class Mesh(vertexdata: FloatArray, indexdata: IntArray, attributes: Array<Vertex
         // call the rendering method every frame
     }
 
-    fun render(shaderProgram: ShaderProgram){
+    fun render(shaderProgram: ShaderProgram) {
         material?.bind(shaderProgram)
         render()
         //material.unbind()
+    }
+
+    /** ONLY use with Wall */
+    fun calculateMeshTBNs() : Matrix3f {
+        TODO("I try to implement the geometry shader for the walls. - Paul")
     }
 
     /**

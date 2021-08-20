@@ -33,6 +33,7 @@
 - Zoomfunktion [Sara]
 >Texturen:
 - Cubemap(s) in welcher sich die Welt befindet [Kevin]
+- Transparenz von Wasser mittels Blending [Kevin]
 - animierte Wassertexture auf Tiles, die Wasserelemente besitzen [Paul]
 >Weitergehende Konzepte:
 - Objekt Kollision [Kevin]

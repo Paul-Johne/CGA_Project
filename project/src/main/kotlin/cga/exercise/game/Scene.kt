@@ -2,6 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.shader.*
 import cga.exercise.components.texture.CubeMap
 import cga.exercise.components.texture.Texture2D
@@ -22,7 +23,7 @@ class Scene(private val window: GameWindow) {
 
     private val debugShader : ShaderProgram
     private val skyShader : ShaderProgram
-    //private val wallShader : ShaderProgram
+    private val wallShader : ShaderProgram
 
     private val skyboxTex : CubeMap
 
@@ -42,6 +43,8 @@ class Scene(private val window: GameWindow) {
     private val isoCamAnchor2 = Transformable()
     private val skyboxRotator = Transformable()
 
+    private val pointLight : PointLight
+
     init {
         /* initial opengl state */
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f); GLError.checkThrow()
@@ -60,7 +63,7 @@ class Scene(private val window: GameWindow) {
         /* initialized ShaderPrograms */
         debugShader = ShaderProgramStandard("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
         skyShader = ShaderProgramStandard("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
-        //wallShader = ShaderProgramGeometry("assets/shaders/wall_vertex.glsl", "assets/shaders/wall_geometry.glsl", "assets/shaders/wall_fragment.glsl")
+        wallShader = ShaderProgramGeometry("assets/shaders/wall_vertex.glsl", "assets/shaders/wall_geometry.glsl", "assets/shaders/wall_fragment.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
@@ -162,9 +165,11 @@ class Scene(private val window: GameWindow) {
         diffPalette01.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
         val diffWall = Texture2D("assets/textures/diffuse_wall.png", true)
         diffWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+        val normWall = Texture2D("assets/textures/normal_wall.png", true)
+        normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
 
         val tileMat : Material = MaterialTiles(diffPalette01)
-        val wallMat : Material = MaterialWall(diffWall)
+        val wallMat : Material = MaterialWall(diffWall, normWall)
 
         /* loaded tiles with OBJLoader */
         val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
@@ -227,6 +232,9 @@ class Scene(private val window: GameWindow) {
         isoCam = TronCamera(parent = isoCamAnchor)
         isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
+
+        /* PointLight for Normal Mapping*/
+        pointLight = PointLight(Vector3f(0.0f, 10.0f, 0.0f), Vector3i(0, 255, 0), parent = null)
     }
 
     fun render(dt: Float, t: Float) {
@@ -241,14 +249,18 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS)
 
         debugShader.use()
-        //debugCam.bind(debugShader)
         isoCam.bind(debugShader)
 
         tile003GROUND.render(debugShader)
         tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
         tile003TREE.render(debugShader)
-        tile003WALL.render(debugShader)
+
+        wallShader.use()
+        pointLight.bind(wallShader, 0)
+        isoCam.bind(wallShader)
+
+        tile003WALL.render(wallShader)
     }
 
     fun update(dt: Float, t: Float) {

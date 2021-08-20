@@ -1,4 +1,5 @@
 #version 330 core
+#extension GL_EXT_geometry_shader4 : enable
 #define NUM_POINT_LIGHTS 1
 
 /* Input-Type */
@@ -17,27 +18,26 @@ out struct VertexData {
     vec3 position;
     vec2 texCoords;
     vec3 normal;
-} vertexData[];
+} vertexDataGeo;
 
 /* Lighting - Stuff (using Interface Blocks) */
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
-
 in vec3 toCamera[];
-out vec3 toCamera[];
+out vec3 toCameraGeo;
 
 in struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
-in vec3 toPointLightsIN[NUM_POINT_LIGHTS][];
+uniform PointLight pointLights[NUM_POINT_LIGHTS];
+in vec3 toPointLights[][NUM_POINT_LIGHTS];
 
 out struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
-out vec3 toPointLightsGeo[NUM_POINT_LIGHTS][];
+out vec3 toPointLightsGeo[NUM_POINT_LIGHTS];
 
 
 /* Tangent and Bitangent for each vertex */
@@ -66,11 +66,16 @@ vec3 calculateNormalizedTangent() {
 }
 
 void main() {
-    /* calculating tangent and bitangent for each vertex of current primitive*/
-    for (int i = 0; i < vertexData.length; i++) {
+    /* calculating tangent and bitangent for each vertex of current triangle*/
+    for (int i = 0; i < 3; i++) {
         tangent = calculateNormalizedTangent();
-        biTangent = normalize(cross(vertexData[0], tangent));
+        biTangent = normalize(cross(vertexData[0].normal, tangent));
+
         TBN = mat3(tangent, biTangent, vertexData[0].normal);
+        vertexDataGeo = vertexData[0];
+        toCameraGeo = toCamera[0];
+        toPointLightsGeo = toPointLights[0];
+
         EmitVertex();
     }
 

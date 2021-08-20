@@ -1,5 +1,4 @@
 #version 330 core
-#extension GL_EXT_geometry_shader4 : enable
 /* Adjust the amount according to used light in scene. Must be at least set to 1. */
 #define NUM_POINT_LIGHTS 1
 
@@ -23,12 +22,12 @@ uniform vec2 tcMultiplier;
 out vec3 toCamera;
 
 /* uniform will be uploaded with PointLight.bind() */
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
 out struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
+uniform PointLight pointLights[NUM_POINT_LIGHTS];
 out vec3 toPointLights[NUM_POINT_LIGHTS];
 
 void main() {

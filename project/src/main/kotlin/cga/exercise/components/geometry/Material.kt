@@ -1,6 +1,7 @@
 package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.shader.ShaderProgramGeometry
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -50,12 +51,18 @@ class MaterialTiles(var diffPalette: Texture2D,
 }
 
 class MaterialWall(var diffWall: Texture2D,
+                   var normWall: Texture2D,
                    var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
 
     override fun bind(shaderProgram: ShaderProgram) {
         diffWall.bind(3) // same textureUnit as MaterialTiles
-
         shaderProgram.setUniform("diffWall", 4)
+
+        if (shaderProgram is ShaderProgramGeometry) {
+            normWall.bind(4)
+            shaderProgram.setUniform("normWall", 5)
+        }
+
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
     }
 }

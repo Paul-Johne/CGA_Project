@@ -144,6 +144,7 @@ class ShaderProgramStandard(vertexShaderPath: String, fragmentShaderPath: String
             throw Exception("Fragment shader compilation failed:\n$log")
         }
         programID = GL20.glCreateProgram()
+        println("ShaderProgramStandard ID: $programID")
         if (programID == 0) {
             GL20.glDeleteShader(vShader)
             GL20.glDeleteShader(fShader)
@@ -319,6 +320,7 @@ class ShaderProgramGeometry(vertexShaderPath: String, geometryShaderPath: String
         }
 
         programID = glCreateProgram()
+        println("ShaderProgramGeo ID: $programID")
         if (programID == 0) {
             glDeleteShader(vShader)
             glDeleteShader(gShader)

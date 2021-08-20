@@ -54,6 +54,9 @@ class Scene(private val window: GameWindow) {
     private val tile006 : Tile
     private val tile007 : Tile
     private val tile008 : Tile
+    private var tileList = mutableListOf<Tile?>()
+
+    private val empty : EmptySpot
 
 
     init {
@@ -260,7 +263,7 @@ class Scene(private val window: GameWindow) {
         tile006 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile006.obj"), objAttribs, tileMat, wallMat)
         tile007 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile007.obj"), objAttribs, tileMat, wallMat)
         tile008 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile008.obj"), objAttribs, tileMat, wallMat)
-        tile001?.translateLocal(Vector3f(-10f, 0f, -10f))
+        tile001?.translateLocal(Vector3f(10f, 0f, 10f))
         tile002?.translateLocal(Vector3f(0f, 0f, -10f))
         tile003?.translateLocal(Vector3f(10f, 0f, -10f))
         tile004?.translateLocal(Vector3f(-10f, 0f, 0f))
@@ -268,6 +271,17 @@ class Scene(private val window: GameWindow) {
         tile006?.translateLocal(Vector3f(10f, 0f, 0f))
         tile007?.translateLocal(Vector3f(-10f, 0f, 10f))
         tile008?.translateLocal(Vector3f(0f, 0f, 10f))
+        tileList.add(null)
+        tileList.add(tile002)
+        tileList.add(tile003)
+        tileList.add(tile004)
+        tileList.add(tile005)
+        tileList.add(tile006)
+        tileList.add(tile007)
+        tileList.add(tile008)
+        tileList.add(tile001)
+
+        empty = EmptySpot(tileList)
 
         /* player */
         player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
@@ -302,6 +316,7 @@ class Scene(private val window: GameWindow) {
 
     fun update(dt: Float, t: Float) {
         /* player movement*/
+
         if(window.getKeyState(GLFW_KEY_W)) {
             player?.translateLocal(Vector3f(-5f* dt, 0f, 0f))
             if(window.getKeyState(GLFW_KEY_A))
@@ -316,6 +331,8 @@ class Scene(private val window: GameWindow) {
             if(window.getKeyState(GLFW_KEY_D))
                 player?.rotateLocal(0f, 1.5f * dt, 0f)
         }
+
+
 
 
 
@@ -340,6 +357,69 @@ class Scene(private val window: GameWindow) {
             }
             isoCam.parent = isoCamList[isoCam.place]
         }
+
+        /* tile movement */
+        //empty nach Norden
+        if (window.getKeyState(GLFW_KEY_T)) {
+            var i = 0
+            for (data in tileList) {
+                if (tileList[i] == empty.neighbourNegZ && tileList[i] != null) {
+                    tileList[i]?.translateLocal(Vector3f(0f, 0f, 10f))
+                    tileList = empty.moveNegZ(i)
+
+
+                    return
+                }
+                i++
+            }
+        }
+        //empty nach Süden
+        if (window.getKeyState(GLFW_KEY_G)) {
+            var i = 0
+            for (data in tileList) {
+                if (tileList[i] == empty.neighbourPosZ  && tileList[i] != null) {
+                    tileList[i]?.translateLocal(Vector3f(0f, 0f, -10f))
+                    tileList = empty.movePosZ(i)
+
+
+                    return
+                }
+                i++
+            }
+        }
+        //empty nach Westen
+        if (window.getKeyState(GLFW_KEY_F)) {
+            var i = 0
+            for (data in tileList) {
+                if (tileList[i] == empty.neighbourNegX && tileList[i] != null) {
+                    tileList[i]?.translateLocal(Vector3f(10f, 0f, 0f))
+                    tileList = empty.moveNegX(i)
+
+
+                    return
+                }
+                i++
+            }
+        }
+
+        //empty nach Osten
+        if (window.getKeyState(GLFW_KEY_H)) {
+            var i = 0
+            for (data in tileList) {
+                if (tileList[i] == empty.neighbourPosX && tileList[i] != null) {
+                    tileList[i]?.translateLocal(Vector3f(-10f, 0f, 0f))
+                    tileList = empty.movePosX(i)
+
+
+                    return
+                }
+                i++
+            }
+        }
+
+
+
+
     }
 
     var lastMousePosX : Double = 0.0

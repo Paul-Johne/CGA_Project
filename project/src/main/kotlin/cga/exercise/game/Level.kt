@@ -31,7 +31,7 @@ class Level(vararg tileSpots: TileSpot, player: Player) {
         }
 
     fun movePlayer(player: Player) {
-        TODO()
+        //siehe Szene.update()
     }
 
     fun moveTileToEmptyTileSpot() {
@@ -40,6 +40,6 @@ class Level(vararg tileSpots: TileSpot, player: Player) {
     }
 
     fun renderLevel() {
-        TODO("call TileSpot::render() to render Renderable Tile AND Player")
+        //maybe hier nicht nötig
     }
 }

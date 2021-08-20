@@ -1,6 +1,7 @@
 #version 330 core
-/* Adjust the amount according to used light in scene. */
-#define NUM_POINT_LIGHTS 0
+#extension GL_EXT_geometry_shader4 : enable
+/* Adjust the amount according to used light in scene. Must be at least set to 1. */
+#define NUM_POINT_LIGHTS 1
 
 /* Vertexattributes of mesh's vertices */
 layout (location = 0) in vec3 position;
@@ -22,12 +23,12 @@ uniform vec2 tcMultiplier;
 out vec3 toCamera;
 
 /* uniform will be uploaded with PointLight.bind() */
+uniform PointLight pointLights[NUM_POINT_LIGHTS];
 out struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
-uniform PointLight pointLights[NUM_POINT_LIGHTS];
 out vec3 toPointLights[NUM_POINT_LIGHTS];
 
 void main() {
@@ -39,7 +40,7 @@ void main() {
     gl_Position = projection_matrix * view_matrix * posWorldSpace;
 
     vertexData.position = posWorldSpace.xyz;
-    vertexData.texCoords = tcMultiplier * textureCoordinates;
+    vertexData.texCoords = tcMultiplier * texCoords;
     vertexData.normal = (inverse(transpose(view_matrix * model_matrix)) * vec4(normal,0.0f)).xyz; // Normal in Camera Space
 
     toCamera = -posCameraSpace.xyz;

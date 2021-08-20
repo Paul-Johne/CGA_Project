@@ -22,6 +22,7 @@ class Scene(private val window: GameWindow) {
 
     private val debugShader : ShaderProgram
     private val skyShader : ShaderProgram
+    //private val wallShader : ShaderProgram
 
     private val skyboxTex : CubeMap
 
@@ -59,6 +60,7 @@ class Scene(private val window: GameWindow) {
         /* initialized ShaderPrograms */
         debugShader = ShaderProgramStandard("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
         skyShader = ShaderProgramStandard("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
+        //wallShader = ShaderProgramGeometry("assets/shaders/wall_vertex.glsl", "assets/shaders/wall_geometry.glsl", "assets/shaders/wall_fragment.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))

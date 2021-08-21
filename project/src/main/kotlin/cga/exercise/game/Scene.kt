@@ -51,9 +51,6 @@ class Scene(private val window: GameWindow) {
     private val tile008 : Tile
     private var tileList = mutableListOf<Tile?>()
 
-    private val isWall = mutableListOf<Mesh>()
-    private val noWall = mutableListOf<Mesh>()
-
     private val empty : EmptySpot
     private val keyObj : KeyObject
     private val keyObjGoal : KeyObject
@@ -207,14 +204,6 @@ class Scene(private val window: GameWindow) {
 
         empty = EmptySpot(tileList)
 
-        for (mesh in tile001.tileData) {
-            if (mesh.material is MaterialWall) {
-                isWall.add(mesh)
-            } else {
-                noWall.add(mesh)
-            }
-        }
-
         /* player */
         player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
         player.translateLocal(Vector3f(0f, 1f, 0f))
@@ -253,7 +242,6 @@ class Scene(private val window: GameWindow) {
         skybox.render(skyShader)
         glDepthFunc(GL_LESS)
 
-        /*
         debugShader.use()
         isoCam.bind(debugShader)
 
@@ -266,36 +254,19 @@ class Scene(private val window: GameWindow) {
         arrowNegZ.render(debugShader)
         arrowPosZ.render(debugShader)
         arrowPosX.render(debugShader)
-
-        for (entry in noWall) {
-            entry.render(debugShader)
-        }
 
         wallShader.use()
-        isoCam.bind(wallShader)
         pointLight.bind(wallShader, 0)
+        isoCam.bind(wallShader)
 
-        for (entry in isWall) {
-            entry.render(wallShader)
-        }*/
-
-        debugShader.use()
-        isoCam.bind(debugShader)
-        player.render(debugShader)
-        keyObj.render(debugShader)
-        keyObjGoal.render(debugShader)
-        arrowNegX.render(debugShader)
-        arrowNegZ.render(debugShader)
-        arrowPosZ.render(debugShader)
-        arrowPosX.render(debugShader)
-        tile001.render(debugShader)
-        tile002.render(debugShader)
-        tile003.render(debugShader)
-        tile004.render(debugShader)
-        tile005.render(debugShader)
-        tile006.render(debugShader)
-        tile007.render(debugShader)
-        tile008.render(debugShader)
+        tile001.render(wallShader)
+        tile002.render(wallShader)
+        tile003.render(wallShader)
+        tile004.render(wallShader)
+        tile005.render(wallShader)
+        tile006.render(wallShader)
+        tile007.render(wallShader)
+        tile008.render(wallShader)
     }
 
     fun update(dt: Float, t: Float) {

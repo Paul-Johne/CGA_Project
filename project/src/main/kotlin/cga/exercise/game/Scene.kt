@@ -128,9 +128,11 @@ class Scene(private val window: GameWindow) {
         diffWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
         val normWall = Texture2D("assets/textures/normal_wall.png", true)
         normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+        val cgaSpec = Texture2D("assets/textures/spec_wall.png", true)
+        normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
 
         tileMat = MaterialTiles(diffPalette01)
-        wallMat = MaterialWall(diffWall, normWall)
+        wallMat = MaterialWall(diffWall, normWall, cgaSpec)
 
         /* loaded tiles with OBJLoader */
         val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
@@ -195,7 +197,7 @@ class Scene(private val window: GameWindow) {
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
 
         /* PointLight for Normal Mapping*/
-        pointLight = PointLight(Vector3f(0.0f, 0.0f, 0.0f), Vector3i(100, 100, 0), parent = null)
+        pointLight = PointLight(Vector3f(0.0f, 0.0f, 0.0f), Vector3i(100, 100, 0), parent = isoCam.parent)
     }
 
     fun render(dt: Float, t: Float) {
@@ -216,10 +218,7 @@ class Scene(private val window: GameWindow) {
         tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
         tile003TREE.render(debugShader)
-        tile003WALL.render(debugShader)
-        (wallMat as MaterialWall).unbind()
 
-        // buggy
         wallShader.use()
         pointLight.bind(wallShader, 0)
         isoCam.bind(wallShader)

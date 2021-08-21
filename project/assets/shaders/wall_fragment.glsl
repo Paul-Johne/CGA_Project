@@ -3,6 +3,7 @@
 
 uniform sampler2D diffWall;
 uniform sampler2D normWall;
+uniform sampler2D specWall;
 
 struct VertexData {
     vec3 position;
@@ -50,15 +51,15 @@ vec3 rgbToNormalizedXyz(vec3 normTerm) {
 out vec4 color;
 
 void main() {
-    // BUG: irgendwas stimmt mit Hasi..ehm, den texCoords nicht!
     vec3 diffTerm = texture(diffWall, vertexDataGeo.texCoords).rgb;
     vec3 normTerm = texture(normWall, vertexDataGeo.texCoords).rgb;
+    vec3 specTerm = texture(specWall, vertexDataGeo.texCoords).rgb;
 
     normTerm = rgbToNormalizedXyz(normTerm);
     vec3 normalizedNormal = normalize(TBN * normTerm);
     normalizedToCamera = normalize(toCameraGeo);
 
-    //color += vec4(diffTerm, 0.0f); //shows that verteDataGeo.texCoords is buggy
+    color += vec4(diffTerm, 0.0f);
 
     /* brdfWall for each pointLight */
     for (int i = 0; i < pointLights.length; i++) {
@@ -71,6 +72,6 @@ void main() {
         cosBetaK_Halfway_current = getCosAngleK(getCosAngle(normalizedHalfwayDirection_current, normalizedNormal));
 
         /* brdf with YELLOW spotLight */
-        color += vec4(brdfWall(diffTerm, vec3(1.0f, 1.0f, 1.0f), cosAlpha_current, cosBetaK_Halfway_current, pointLights[i].color, toPointLightsGeo[i]), 0.0f);
+        color += vec4(brdfWall(diffTerm, specTerm, cosAlpha_current, cosBetaK_Halfway_current, pointLights[i].color, toPointLightsGeo[i]), 0.0f);
     }
 }

@@ -40,8 +40,8 @@ void main() {
     gl_Position = projection_matrix * view_matrix * posWorldSpace;
 
     vertexData.position = posWorldSpace.xyz; // Position in World Space
-    vertexData.texCoords = tcMultiplier * texCoords;
-    vertexData.normal = (inverse(transpose(view_matrix * model_matrix)) * vec4(normal,0.0f)).xyz; // Normal in Camera Space
+    vertexData.texCoords = tcMultiplier * texCoords; // considering tcMultiplier
+    vertexData.normal = (inverse(transpose(model_matrix)) * vec4(normal,0.0f)).xyz; // Normal in World Space
 
     toCamera = -posCameraSpace.xyz;
 

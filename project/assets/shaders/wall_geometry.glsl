@@ -57,23 +57,50 @@ vec3 calculateNormalizedTangent() {
 
 void main() {
     /* calculating tangent and bitangent for each vertex of current triangle*/
-    for (int i = 0; i < 3; i++) {
-        tangent = calculateNormalizedTangent();
-        biTangent = normalize(cross(vertexData[0].normal, tangent));
+    tangent = calculateNormalizedTangent();
+    biTangent = normalize(cross(vertexData[0].normal, tangent));
+    TBN = mat3(tangent, biTangent, vertexData[0].normal);
 
-        TBN = mat3(tangent, biTangent, vertexData[0].normal);
+    vertexDataGeo.position = vertexData[0].position;
+    vertexDataGeo.texCoords = vertexData[0].texCoords;
+    vertexDataGeo.normal = vertexData[0].normal;
 
-        vertexDataGeo.position = vertexData[0].position;
-        vertexDataGeo.texCoords = vertexData[0].texCoords;
-        vertexDataGeo.normal = vertexData[0].normal;
+    gl_Position = gl_in[0].gl_Position; // MOST IMPORTANT LINE OF CODE
 
-        gl_Position = gl_in[i].gl_Position; // MOST IMPORTANT LINE OF CODE
+    toCameraGeo = toCamera[0];
+    toPointLightsGeo = toPointLights[0];
 
-        toCameraGeo = toCamera[0];
-        toPointLightsGeo = toPointLights[0];
+    EmitVertex();
 
-        EmitVertex();
-    }
+    tangent = calculateNormalizedTangent();
+    biTangent = normalize(cross(vertexData[1].normal, tangent));
+    TBN = mat3(tangent, biTangent, vertexData[1].normal);
+
+    vertexDataGeo.position = vertexData[1].position;
+    vertexDataGeo.texCoords = vertexData[1].texCoords;
+    vertexDataGeo.normal = vertexData[1].normal;
+
+    gl_Position = gl_in[1].gl_Position; // MOST IMPORTANT LINE OF CODE
+
+    toCameraGeo = toCamera[1];
+    toPointLightsGeo = toPointLights[1];
+
+    EmitVertex();
+
+    tangent = calculateNormalizedTangent();
+    biTangent = normalize(cross(vertexData[2].normal, tangent));
+    TBN = mat3(tangent, biTangent, vertexData[2].normal);
+
+    vertexDataGeo.position = vertexData[2].position;
+    vertexDataGeo.texCoords = vertexData[2].texCoords;
+    vertexDataGeo.normal = vertexData[2].normal;
+
+    gl_Position = gl_in[2].gl_Position; // MOST IMPORTANT LINE OF CODE
+
+    toCameraGeo = toCamera[2];
+    toPointLightsGeo = toPointLights[2];
+
+    EmitVertex();
 
     EndPrimitive(); // next strip COULD be calculated
 }

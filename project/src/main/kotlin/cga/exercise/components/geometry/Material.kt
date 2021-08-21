@@ -56,6 +56,7 @@ class MaterialTiles(var diffPalette: Texture2D,
 
 class MaterialWall(var diffWall: Texture2D,
                    var normWall: Texture2D,
+                   var specWall : Texture2D,
                    var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
 
     override fun bind(shaderProgram: ShaderProgram) {
@@ -65,6 +66,8 @@ class MaterialWall(var diffWall: Texture2D,
         if (shaderProgram is ShaderProgramGeometry) {
             normWall.bind(1)
             shaderProgram.setUniform("normWall", 1)
+            specWall.bind(2)
+            shaderProgram.setUniform("specWall", 2)
         }
 
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)

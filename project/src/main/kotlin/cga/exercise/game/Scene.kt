@@ -32,12 +32,6 @@ class Scene(private val window: GameWindow) {
     private val cubeMap : Renderable
     private val skybox : Renderable
 
-    private val tile003BENCH : Renderable
-    private val tile003GROUND : Renderable
-    private val tile003TREE : Renderable
-    private val tile003WALL : Renderable
-    private val tile003WATER : Renderable
-
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
     private val isoCamAnchor3 = Transformable()
@@ -59,6 +53,11 @@ class Scene(private val window: GameWindow) {
     private val empty : EmptySpot
     private val keyObj : KeyObject
     private val keyObjGoal : KeyObject
+    private val arrowNegZ : Player
+    private val arrowPosX : Player
+    private val arrowPosZ : Player
+    private val arrowNegX : Player
+
 
 
     init {
@@ -184,51 +183,6 @@ class Scene(private val window: GameWindow) {
         val tileMat : Material = MaterialTiles(diffPalette01)
         val wallMat : Material = MaterialWall(diffWall)
 
-        /* loaded tiles with OBJLoader */
-        val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
-
-        /* processed tileData */
-        val tile003Data : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
-        val tile003IsWall : MutableList<Boolean> = mutableListOf()
-
-        for (data in tile003Res.objects) {
-            tile003Data.add(data.meshes)
-            tile003IsWall.add(data.isWall)
-        }
-
-        println("Wall-Detection: $tile003IsWall")
-
-        // tile???Data[OBJECT][MESH] ==> MutableList<Mesh>
-        val tile003MeshList : MutableList<Mesh> = mutableListOf()
-        var objectCounter : Int = 0
-
-        for (tileObject in tile003Data) {
-            for((meshes, _) in tileObject.withIndex()) {
-
-                if (tile003IsWall[objectCounter]) {
-                    println("Wall detected")
-                    tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
-                                             tileObject[meshes].indexData,
-                                             objAttribs, wallMat))
-                    objectCounter += 1
-                } else {
-                    println("Tile detected")
-                    tile003MeshList.add(Mesh(tileObject[meshes].vertexData,
-                                             tileObject[meshes].indexData,
-                                             objAttribs, tileMat))
-                    objectCounter += 1
-                }
-
-            }
-        }
-        objectCounter = 0 // resetting counter for next tile
-
-        tile003BENCH = Renderable(mutableListOf(tile003MeshList[0]))
-        tile003GROUND = Renderable(mutableListOf(tile003MeshList[1]))
-        tile003TREE = Renderable(mutableListOf(tile003MeshList[2]))
-        tile003WALL = Renderable(mutableListOf(tile003MeshList[3]))
-        tile003WATER = Renderable(mutableListOf(tile003MeshList[4]))
-
         /* implemented camera */
         debugCam = TronCamera(parent = null)
         debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
@@ -265,7 +219,7 @@ class Scene(private val window: GameWindow) {
         tile006 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile006.obj"), objAttribs, tileMat, wallMat)
         tile007 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile007.obj"), objAttribs, tileMat, wallMat)
         tile008 = Tile(OBJLoader.loadOBJ("assets/models/cga_tile008.obj"), objAttribs, tileMat, wallMat)
-        tile001.translateLocal(Vector3f(10f, 0f, 10f))
+        tile001.translateLocal(Vector3f(-10f, 0f, -10f))
         tile002.translateLocal(Vector3f(0f, 0f, -10f))
         tile003.translateLocal(Vector3f(10f, 0f, -10f))
         tile004.translateLocal(Vector3f(-10f, 0f, 0f))
@@ -273,7 +227,7 @@ class Scene(private val window: GameWindow) {
         tile006.translateLocal(Vector3f(10f, 0f, 0f))
         tile007.translateLocal(Vector3f(-10f, 0f, 10f))
         tile008.translateLocal(Vector3f(0f, 0f, 10f))
-        tileList.add(null)
+        tileList.add(tile001)
         tileList.add(tile002)
         tileList.add(tile003)
         tileList.add(tile004)
@@ -281,7 +235,7 @@ class Scene(private val window: GameWindow) {
         tileList.add(tile006)
         tileList.add(tile007)
         tileList.add(tile008)
-        tileList.add(tile001)
+        tileList.add(null)
 
         empty = EmptySpot(tileList)
 
@@ -293,8 +247,20 @@ class Scene(private val window: GameWindow) {
         keyObj.translateLocal(Vector3f(10f, -3f, 0f))
         //keyObj.scaleLocal(Vector3f(0.5f))
         keyObjGoal = KeyObject(OBJLoader.loadOBJ("assets/models/cga_keygoal.obj"), objAttribs, tileMat)
-        keyObjGoal.translateLocal(Vector3f(8f, 1.5f, 10f))
+        keyObjGoal.translateLocal(Vector3f(-1f, 0.7f, 13.5f))
 
+        arrowNegZ = Player(OBJLoader.loadOBJ("assets/models/cga_arrow.obj"), objAttribs, tileMat)
+        arrowPosX = Player(OBJLoader.loadOBJ("assets/models/cga_arrow.obj"), objAttribs, tileMat)
+        arrowPosZ = Player(OBJLoader.loadOBJ("assets/models/cga_arrow.obj"), objAttribs, tileMat)
+        arrowNegX = Player(OBJLoader.loadOBJ("assets/models/cga_arrow.obj"), objAttribs, tileMat)
+
+        arrowPosZ.translateLocal(Vector3f(10f, -0.1f, 6f))
+        arrowPosZ.rotateLocal(0f, toRadians(90f), 0f)
+        arrowPosX.translateLocal(Vector3f(6f, -0.1f, 10f))
+        arrowPosX.rotateLocal(0f, toRadians(180f), 0f)
+        arrowNegZ.translateLocal(Vector3f(10f, -0.1f, 4f))
+        arrowNegZ.rotateLocal(0f, toRadians(270f), 0f)
+        arrowNegX.translateLocal(Vector3f(4f, -0.1f, 10f))
     }
 
     fun render(dt: Float, t: Float) {
@@ -323,13 +289,19 @@ class Scene(private val window: GameWindow) {
         player.render(debugShader)
         keyObj.render(debugShader)
         keyObjGoal.render(debugShader)
+        arrowNegX.render(debugShader)
+        arrowNegZ.render(debugShader)
+        arrowPosZ.render(debugShader)
+        arrowPosX.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {
-        /* player movement*/
-
+        /* player movement, key follows player if it gets carried*/
         if(window.getKeyState(GLFW_KEY_W)) {
             player.translateLocal(Vector3f(-5f* dt, 0f, 0f))
+            if(keyObj.getcarried) {
+                keyObj.translateGlobal(Vector3f(player.getPosition().x-keyObj.getPosition().x, player.getPosition().y-keyObj.getPosition().y, player.getPosition().z-keyObj.getPosition().z))
+            }
             if(window.getKeyState(GLFW_KEY_A))
                 player.rotateLocal(0f, 5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
@@ -337,16 +309,17 @@ class Scene(private val window: GameWindow) {
         }
         if(window.getKeyState(GLFW_KEY_S)) {
             player.translateLocal(Vector3f(1.5f * dt, 0f, 0f))
+            if(keyObj.getcarried) {
+                keyObj.translateGlobal(Vector3f(player.getPosition().x-keyObj.getPosition().x, player.getPosition().y-keyObj.getPosition().y, player.getPosition().z-keyObj.getPosition().z))
+            }
             if(window.getKeyState(GLFW_KEY_A))
                 player.rotateLocal(0f, -1.5f * dt, 0f)
             if(window.getKeyState(GLFW_KEY_D))
                 player.rotateLocal(0f, 1.5f * dt, 0f)
         }
 
-        /* key rotation*/
-        if (!keyObj.getcarried) {
-            keyObj.rotateLocal(0f, -1.5f * dt, 0f)
-        }
+        /* automatic key rotation*/
+        keyObj.rotateLocal(0f, -1.5f * dt, 0f)
     }
 
     fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
@@ -375,9 +348,23 @@ class Scene(private val window: GameWindow) {
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourNegZ && tileList[i] != null) {
                     tileList[i]?.translateLocal(Vector3f(0f, 0f, 10f))
+                    /* keyObj and keyObjGoal follow their tile movement*/
+                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                        keyObj.translateGlobal(Vector3f(0f, 0f, 10f))
+                    }
+                    if (tileList[i] == tile008) {
+                        keyObjGoal.translateGlobal(Vector3f(0f, 0f, 10f))
+                    }
                     tileList = empty.moveNegZ(i)
-
-
+                    /* arrow placement */
+                    if(i != 2 && i != 1 && i != 0) {
+                        arrowPosZ.translateLocal(Vector3f(10f, 0f, 0f))
+                    }
+                    if(i != 3 && i != 4 && i != 5) {
+                        arrowNegZ.translateLocal(Vector3f(-10f, 0f, 0f))
+                    }
+                    arrowPosX.translateLocal(Vector3f(0f, 0f, 10f))
+                    arrowNegX.translateLocal(Vector3f(0f, 0f, -10f))
                     return
                 }
                 i++
@@ -389,9 +376,23 @@ class Scene(private val window: GameWindow) {
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourPosZ  && tileList[i] != null) {
                     tileList[i]?.translateLocal(Vector3f(0f, 0f, -10f))
+                    /* keyObj and keyObjGoal follow their tile movement*/
+                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                        keyObj.translateGlobal(Vector3f(0f, 0f, -10f))
+                    }
+                    if (tileList[i] == tile008) {
+                        keyObjGoal.translateGlobal(Vector3f(0f, 0f, -10f))
+                    }
                     tileList = empty.movePosZ(i)
-
-
+                    /* arrow placement */
+                    if(i != 6 && i != 7 && i != 8) {
+                        arrowNegZ.translateLocal(Vector3f(10f, 0f, 0f))
+                    }
+                    if(i != 3 && i != 4 && i != 5) {
+                        arrowPosZ.translateLocal(Vector3f(-10f, 0f, 0f))
+                    }
+                    arrowPosX.translateLocal(Vector3f(0f, 0f, -10f))
+                    arrowNegX.translateLocal(Vector3f(0f, 0f, 10f))
                     return
                 }
                 i++
@@ -403,9 +404,23 @@ class Scene(private val window: GameWindow) {
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourNegX && tileList[i] != null) {
                     tileList[i]?.translateLocal(Vector3f(10f, 0f, 0f))
+                    /* keyObj and keyObjGoal follow their tile movement*/
+                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                        keyObj.translateGlobal(Vector3f(10f, 0f, 0f))
+                    }
+                    if (tileList[i] == tile008) {
+                        keyObjGoal.translateGlobal(Vector3f(10f, 0f, 0f))
+                    }
                     tileList = empty.moveNegX(i)
-
-
+                    /* arrow placement */
+                    if(i != 0 && i != 3 && i != 6) {
+                        arrowPosX.translateLocal(Vector3f(10f, 0f, 0f))
+                    }
+                    if(i != 1 && i != 4 && i != 7) {
+                        arrowNegX.translateLocal(Vector3f(-10f, 0f, 0f))
+                    }
+                    arrowPosZ.translateLocal(Vector3f(0f, 0f, -10f))
+                    arrowNegZ.translateLocal(Vector3f(0f, 0f, 10f))
                     return
                 }
                 i++
@@ -418,9 +433,23 @@ class Scene(private val window: GameWindow) {
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourPosX && tileList[i] != null) {
                     tileList[i]?.translateLocal(Vector3f(-10f, 0f, 0f))
+                    /* keyObj and keyObjGoal follow their tile movement*/
+                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                        keyObj.translateGlobal(Vector3f(-10f, 0f, 0f))
+                    }
+                    if (tileList[i] == tile008) {
+                        keyObjGoal.translateGlobal(Vector3f(-10f, 0f, 0f))
+                    }
                     tileList = empty.movePosX(i)
-
-
+                    /* arrow placement */
+                    if(i != 2 && i != 5 && i != 8) {
+                        arrowNegX.translateLocal(Vector3f(10f, 0f, 0f))
+                    }
+                    if(i != 1 && i != 4 && i != 7) {
+                        arrowPosX.translateLocal(Vector3f(-10f, 0f, 0f))
+                    }
+                    arrowPosZ.translateLocal(Vector3f(0f, 0f, 10f))
+                    arrowNegZ.translateLocal(Vector3f(0f, 0f, -10f))
                     return
                 }
                 i++
@@ -439,7 +468,8 @@ class Scene(private val window: GameWindow) {
             } else {
                 if(!keyObj.atgoal && player.getPosition().x <= keyObj.getPosition().x+1.5 && player.getPosition().x >= keyObj.getPosition().x-1.5 && player.getPosition().z <= keyObj.getPosition().z+1.5 && player.getPosition().z >= keyObj.getPosition().z-1.5) {
                     keyObj.getcarried = true
-                    keyObj.modelMatrix = player.modelMatrix
+                    //keyObj.modelMatrix = player.modelMatrix
+                    keyObj.translateGlobal(Vector3f(player.getPosition().x-keyObj.getPosition().x, player.getPosition().y-keyObj.getPosition().y, player.getPosition().z-keyObj.getPosition().z))
                 }
             }
         }

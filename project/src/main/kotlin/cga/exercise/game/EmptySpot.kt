@@ -18,14 +18,14 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
     var neighbourPosX : Tile? = null //O
     var neighbourPosZ : Tile? = null //S
     var neighbourNegX : Tile? = null //W
-    var emptyPlace : Int = 0
+    var emptyPlace : Int = 8
     val listofTiles = tileList
     //zu Beginn im Norden und Westen ein Tile, Rest null
     init {
-        //neighbourNegZ = tileList[5]
-        //neighbourNegX = tileList[7]
-        neighbourPosX = tileList[1]
-        neighbourPosZ = tileList[3]
+        neighbourNegZ = tileList[5]
+        neighbourNegX = tileList[7]
+        //neighbourPosX = tileList[1]
+        //neighbourPosZ = tileList[3]
         print(neighbourNegZ)
         print(neighbourPosX)
         print(neighbourPosZ)
@@ -57,12 +57,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
         if (place+3 < 9) {
             neighbourPosZ = listofTiles[emptyPlace+3]
         }
-
-        print(neighbourNegZ)
-        print(neighbourPosX)
-        print(neighbourPosZ)
-        print(neighbourNegX)
-        print("\n")
         return listofTiles
     }
 
@@ -92,11 +86,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
         if (place-3 > 0) {
             neighbourNegZ = listofTiles[emptyPlace-3]
         }
-        print(neighbourNegZ)
-        print(neighbourPosX)
-        print(neighbourPosZ)
-        print(neighbourNegX)
-        print("\n")
         return listofTiles
     }
     //empty nach Westen
@@ -122,14 +111,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
         if (place+1 < 9) {
             neighbourPosX =listofTiles[emptyPlace+1]
         }
-
-
-
-        print(neighbourNegZ)
-        print(neighbourPosX)
-        print(neighbourPosZ)
-        print(neighbourNegX)
-        print("\n")
         return listofTiles
     }
 
@@ -156,15 +137,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
         if (place-1 > 0) {
             neighbourNegX =listofTiles[emptyPlace-1]
         }
-
-
-
-
-        print(neighbourNegZ)
-        print(neighbourPosX)
-        print(neighbourPosZ)
-        print(neighbourNegX)
-        print("\n")
         return listofTiles
     }
 

@@ -15,7 +15,6 @@ out struct VertexData {
 } vertexData;
 
 uniform vec2 tcMultiplier;
-out vec3 toCamera;
 
 void main() {
     vec4 pos = vec4(position, 1.0f);
@@ -27,6 +26,4 @@ void main() {
     vertexData.position = posWorldSpace.xyz;
     vertexData.textureCoordinates = tcMultiplier * textureCoordinates; // how stretched the texture will appear in fragment shader
     vertexData.normal = (inverse(transpose(view_matrix * model_matrix)) * vec4(normal,0.0f)).xyz; // Normals to Camera Space
-
-    toCamera = -posCameraSpace.xyz; // for light calculation in fragment shader => UNUSED !!!
 }

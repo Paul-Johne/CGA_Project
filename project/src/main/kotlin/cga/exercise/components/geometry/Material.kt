@@ -1,6 +1,7 @@
 package cga.exercise.components.geometry
 
 import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.shader.ShaderProgramGeometry
 import cga.exercise.components.texture.Texture2D
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -42,20 +43,38 @@ class MaterialTiles(var diffPalette: Texture2D,
                     var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
 
     override fun bind(shaderProgram: ShaderProgram) {
-        diffPalette.bind(3) // same textureUnit as MaterialWall
+        diffPalette.bind(0) // same textureUnit as MaterialWall (before Normal Mapping)
 
-        shaderProgram.setUniform("diffPalette", 3)
+        shaderProgram.setUniform("diffPalette", 0)
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+    }
+
+    fun unbind() {
+        diffPalette.unbind()
     }
 }
 
 class MaterialWall(var diffWall: Texture2D,
+                   var normWall: Texture2D,
+                   var specWall : Texture2D,
                    var tcMultiplier: Vector2f = Vector2f(1.0f)) : Material() {
 
     override fun bind(shaderProgram: ShaderProgram) {
-        diffWall.bind(3) // same textureUnit as MaterialTiles
+        diffWall.bind(0) // same textureUnit as MaterialTiles (before Normal Mapping)
+        shaderProgram.setUniform("diffWall", 0)
 
-        shaderProgram.setUniform("diffWall", 4)
+        if (shaderProgram is ShaderProgramGeometry) {
+            normWall.bind(1)
+            shaderProgram.setUniform("normWall", 1)
+            specWall.bind(2)
+            shaderProgram.setUniform("specWall", 2)
+        }
+
         shaderProgram.setUniform("tcMultiplier", tcMultiplier)
+    }
+
+    fun unbind() {
+        diffWall.unbind()
+        normWall.unbind()
     }
 }

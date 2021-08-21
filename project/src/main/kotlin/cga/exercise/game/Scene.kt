@@ -2,7 +2,8 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
-import cga.exercise.components.shader.ShaderProgram
+import cga.exercise.components.light.PointLight
+import cga.exercise.components.shader.*
 import cga.exercise.components.texture.CubeMap
 import cga.exercise.components.texture.Texture2D
 import cga.framework.GLError
@@ -23,14 +24,20 @@ class Scene(private val window: GameWindow) {
 
     private val debugShader : ShaderProgram
     private val skyShader : ShaderProgram
+    private val wallShader : ShaderProgram
 
     private val skyboxTex : CubeMap
 
     private val debugCam : TronCamera // => UNUSED
     private val isoCam : TronCamera
 
-    private val cubeMap : Renderable
     private val skybox : Renderable
+
+    private val tile003BENCH : Renderable
+    private val tile003GROUND : Renderable
+    private val tile003TREE : Renderable
+    private val tile003WALL : Renderable
+    private val tile003WATER : Renderable
 
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
@@ -58,7 +65,7 @@ class Scene(private val window: GameWindow) {
     private val arrowPosZ : Player
     private val arrowNegX : Player
 
-
+    private val pointLight : PointLight
 
     init {
         /* initial opengl state */
@@ -76,8 +83,9 @@ class Scene(private val window: GameWindow) {
         val objAttribs = arrayOf(attribPositionOBJ, attribTextureOBJ, attribNormalOBJ)
 
         /* initialized ShaderPrograms */
-        debugShader = ShaderProgram("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
-        skyShader = ShaderProgram("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
+        debugShader = ShaderProgramStandard("assets/shaders/debug_vertex.glsl", "assets/shaders/debug_fragment.glsl")
+        skyShader = ShaderProgramStandard("assets/shaders/skybox_vert.glsl","assets/shaders/skybox_frag.glsl")
+        wallShader = ShaderProgramGeometry("assets/shaders/wall_vertex.glsl", "assets/shaders/wall_geometry.glsl", "assets/shaders/wall_fragment.glsl")
 
         /* BGM */
         val audioInputStream : AudioInputStream = AudioSystem.getAudioInputStream(File("assets/music/雨の上がる音が聞こえる@roku.wav"))
@@ -100,47 +108,6 @@ class Scene(private val window: GameWindow) {
 
         skyboxTex = CubeMap(cubeFaces, false)
         skyboxTex.setTexParams()
-
-        /* CubeMap - Cube => UNUSED */
-        val cubeVBO = floatArrayOf(
-                // pos, pos, pos, texCoord, texCoord
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // 0
-                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // 1
-                 0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 2
-                -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, // 3
-                -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 4
-                 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // 5
-                 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // 6
-                -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, // 7
-                -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 8
-                -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 9
-                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 10
-                 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 11
-                 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 12
-                 0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 13
-                 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // 14
-                -0.5f,  0.5f,  0.5f, 0.0f, 0.0f  // 15
-        )
-        val cubeIBO = intArrayOf(
-                0, 1, 2,
-                2, 3, 0,
-                4, 5, 6,
-                6, 7, 4,
-                8, 9, 10,
-                10, 4, 8,
-                11, 2, 12,
-                12, 13, 11,
-                10, 14, 5,
-                5, 4, 10,
-                3, 2, 11,
-                11, 15, 3
-        )
-
-        val attribPosCube : VertexAttribute = VertexAttribute(3, GL_FLOAT, 20, 0)
-        val attribTexCube : VertexAttribute = VertexAttribute(2, GL_FLOAT, 20, 12)
-        val cubeAttribs = arrayOf(attribPosCube, attribTexCube)
-
-        cubeMap = Renderable(mutableListOf(Mesh(cubeVBO, cubeIBO, cubeAttribs, null)))
 
         /* CubeMap - Skybox */
         val skyboxVBO = floatArrayOf(
@@ -179,9 +146,13 @@ class Scene(private val window: GameWindow) {
         diffPalette01.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
         val diffWall = Texture2D("assets/textures/diffuse_wall.png", true)
         diffWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+        val normWall = Texture2D("assets/textures/normal_wall.png", true)
+        normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
+        val cgaSpec = Texture2D("assets/textures/spec_wall.png", true)
+        normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
 
-        val tileMat : Material = MaterialTiles(diffPalette01)
-        val wallMat : Material = MaterialWall(diffWall)
+        val tileMat = MaterialTiles(diffPalette01)
+        val wallMat = MaterialWall(diffWall, normWall, cgaSpec)
 
         /* implemented camera */
         debugCam = TronCamera(parent = null)
@@ -245,7 +216,7 @@ class Scene(private val window: GameWindow) {
 
         keyObj = KeyObject(OBJLoader.loadOBJ("assets/models/cga_key.obj"), objAttribs, tileMat)
         keyObj.translateLocal(Vector3f(10f, -3f, 0f))
-        //keyObj.scaleLocal(Vector3f(0.5f))
+        
         keyObjGoal = KeyObject(OBJLoader.loadOBJ("assets/models/cga_keygoal.obj"), objAttribs, tileMat)
         keyObjGoal.translateLocal(Vector3f(-1f, 0.7f, 13.5f))
 
@@ -261,6 +232,9 @@ class Scene(private val window: GameWindow) {
         arrowNegZ.translateLocal(Vector3f(10f, -0.1f, 4f))
         arrowNegZ.rotateLocal(0f, toRadians(270f), 0f)
         arrowNegX.translateLocal(Vector3f(4f, -0.1f, 10f))
+        
+        /* PointLight for Normal Mapping*/
+        pointLight = PointLight(Vector3f(0.0f, 0.0f, 0.0f), Vector3i(100, 100, 0), parent = isoCam.parent)
     }
 
     fun render(dt: Float, t: Float) {
@@ -275,7 +249,6 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS)
 
         debugShader.use()
-        //debugCam.bind(debugShader)
         isoCam.bind(debugShader)
 
         tile001.render(debugShader)
@@ -286,9 +259,12 @@ class Scene(private val window: GameWindow) {
         tile006.render(debugShader)
         tile007.render(debugShader)
         tile008.render(debugShader)
+        
         player.render(debugShader)
+        
         keyObj.render(debugShader)
         keyObjGoal.render(debugShader)
+        
         arrowNegX.render(debugShader)
         arrowNegZ.render(debugShader)
         arrowPosZ.render(debugShader)
@@ -331,6 +307,7 @@ class Scene(private val window: GameWindow) {
                 isoCam.place = 0
             }
             isoCam.parent = isoCamList[isoCam.place]
+            pointLight.parent = isoCam.parent
         }
         if(window.getKeyState(GLFW_KEY_2)) {
             if (isoCam.place != 0) {
@@ -339,6 +316,7 @@ class Scene(private val window: GameWindow) {
                 isoCam.place = 3
             }
             isoCam.parent = isoCamList[isoCam.place]
+            pointLight.parent = isoCam.parent
         }
 
         /* tile movement */

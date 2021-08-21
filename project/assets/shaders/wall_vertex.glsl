@@ -12,17 +12,18 @@ uniform mat4 model_matrix;
 uniform mat4 view_matrix;
 uniform mat4 projection_matrix;
 
-out struct VertexData {
+struct VertexData {
     vec3 position;
     vec2 texCoords;
     vec3 normal;
-} vertexData;
+};
+out VertexData vertexData;
 
 uniform vec2 tcMultiplier;
 out vec3 toCamera;
 
 /* uniform will be uploaded with PointLight.bind() */
-out struct PointLight {
+struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
@@ -38,7 +39,7 @@ void main() {
     /* will be used in geometry shader */
     gl_Position = projection_matrix * view_matrix * posWorldSpace;
 
-    vertexData.position = posWorldSpace.xyz;
+    vertexData.position = posWorldSpace.xyz; // Position in World Space
     vertexData.texCoords = tcMultiplier * texCoords;
     vertexData.normal = (inverse(transpose(view_matrix * model_matrix)) * vec4(normal,0.0f)).xyz; // Normal in Camera Space
 

@@ -30,8 +30,10 @@ class Scene(private val window: GameWindow) {
     private val debugCam : TronCamera // => UNUSED
     private val isoCam : TronCamera
 
-    private val cubeMap : Renderable
     private val skybox : Renderable
+
+    private val tileMat : Material
+    private val wallMat : Material
 
     private val tile003BENCH : Renderable
     private val tile003GROUND : Renderable
@@ -87,47 +89,6 @@ class Scene(private val window: GameWindow) {
         skyboxTex = CubeMap(cubeFaces, false)
         skyboxTex.setTexParams()
 
-        /* CubeMap - Cube => UNUSED */
-        val cubeVBO = floatArrayOf(
-                // pos, pos, pos, texCoord, texCoord
-                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f, // 0
-                 0.5f, -0.5f, -0.5f, 1.0f, 0.0f, // 1
-                 0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 2
-                -0.5f,  0.5f, -0.5f, 0.0f, 1.0f, // 3
-                -0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 4
-                 0.5f, -0.5f,  0.5f, 1.0f, 0.0f, // 5
-                 0.5f,  0.5f,  0.5f, 1.0f, 1.0f, // 6
-                -0.5f,  0.5f,  0.5f, 0.0f, 1.0f, // 7
-                -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 8
-                -0.5f,  0.5f, -0.5f, 1.0f, 1.0f, // 9
-                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 10
-                 0.5f,  0.5f,  0.5f, 1.0f, 0.0f, // 11
-                 0.5f, -0.5f, -0.5f, 0.0f, 1.0f, // 12
-                 0.5f, -0.5f,  0.5f, 0.0f, 0.0f, // 13
-                 0.5f, -0.5f, -0.5f, 1.0f, 1.0f, // 14
-                -0.5f,  0.5f,  0.5f, 0.0f, 0.0f  // 15
-        )
-        val cubeIBO = intArrayOf(
-                0, 1, 2,
-                2, 3, 0,
-                4, 5, 6,
-                6, 7, 4,
-                8, 9, 10,
-                10, 4, 8,
-                11, 2, 12,
-                12, 13, 11,
-                10, 14, 5,
-                5, 4, 10,
-                3, 2, 11,
-                11, 15, 3
-        )
-
-        val attribPosCube : VertexAttribute = VertexAttribute(3, GL_FLOAT, 20, 0)
-        val attribTexCube : VertexAttribute = VertexAttribute(2, GL_FLOAT, 20, 12)
-        val cubeAttribs = arrayOf(attribPosCube, attribTexCube)
-
-        cubeMap = Renderable(mutableListOf(Mesh(cubeVBO, cubeIBO, cubeAttribs, null)))
-
         /* CubeMap - Skybox */
         val skyboxVBO = floatArrayOf(
                 // pos, pos, pos
@@ -168,8 +129,8 @@ class Scene(private val window: GameWindow) {
         val normWall = Texture2D("assets/textures/normal_wall.png", true)
         normWall.setTexParams(GL_REPEAT, GL_REPEAT, GL_NEAREST, GL_NEAREST)
 
-        val tileMat : Material = MaterialTiles(diffPalette01)
-        val wallMat : Material = MaterialWall(diffWall, normWall)
+        tileMat = MaterialTiles(diffPalette01)
+        wallMat = MaterialWall(diffWall, normWall)
 
         /* loaded tiles with OBJLoader */
         val tile003Res = OBJLoader.loadOBJ("assets/models/cga_tile003.obj")
@@ -234,7 +195,7 @@ class Scene(private val window: GameWindow) {
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
 
         /* PointLight for Normal Mapping*/
-        pointLight = PointLight(Vector3f(0.0f, 10.0f, 0.0f), Vector3i(0, 255, 0), parent = null)
+        pointLight = PointLight(Vector3f(0.0f, 0.0f, 0.0f), Vector3i(100, 100, 0), parent = null)
     }
 
     fun render(dt: Float, t: Float) {
@@ -255,7 +216,10 @@ class Scene(private val window: GameWindow) {
         tile003WATER.render(debugShader)
         tile003BENCH.render(debugShader)
         tile003TREE.render(debugShader)
+        tile003WALL.render(debugShader)
+        (wallMat as MaterialWall).unbind()
 
+        // buggy
         wallShader.use()
         pointLight.bind(wallShader, 0)
         isoCam.bind(wallShader)
@@ -267,9 +231,11 @@ class Scene(private val window: GameWindow) {
         /* rotate isometric camera */
         if(window.getKeyState(GLFW_KEY_1)) {
             isoCam.parent = isoCamAnchor
+            pointLight.parent = isoCam.parent
         }
         if(window.getKeyState(GLFW_KEY_2)) {
             isoCam.parent = isoCamAnchor2
+            pointLight.parent = isoCam.parent
         }
     }
 

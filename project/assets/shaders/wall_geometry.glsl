@@ -8,35 +8,25 @@ layout (triangles) in;
 layout (triangle_strip, max_vertices = 3) out;
 
 /* in arrays contain 3 values (one for each vertex */
-in struct VertexData {
+struct VertexData {
     vec3 position;
     vec2 texCoords;
     vec3 normal;
-} vertexData[];
-
-out struct VertexData {
-    vec3 position;
-    vec2 texCoords;
-    vec3 normal;
-} vertexDataGeo;
+};
+in VertexData vertexData[];
+out VertexData vertexDataGeo;
 
 /* Lighting - Stuff (using Interface Blocks) */
 in vec3 toCamera[];
 out vec3 toCameraGeo;
 
-in struct PointLight {
+struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
 in vec3 toPointLights[][NUM_POINT_LIGHTS];
-
-out struct PointLight {
-    vec3 position;
-    vec3 color;
-    vec3 attenuation;
-};
 out vec3 toPointLightsGeo[NUM_POINT_LIGHTS];
 
 
@@ -72,7 +62,13 @@ void main() {
         biTangent = normalize(cross(vertexData[0].normal, tangent));
 
         TBN = mat3(tangent, biTangent, vertexData[0].normal);
-        vertexDataGeo = vertexData[0];
+
+        vertexDataGeo.position = vertexData[0].position;
+        vertexDataGeo.texCoords = vertexData[0].texCoords;
+        vertexDataGeo.normal = vertexData[0].normal;
+
+        gl_Position = gl_in[i].gl_Position; // MOST IMPORTANT LINE OF CODE
+
         toCameraGeo = toCamera[0];
         toPointLightsGeo = toPointLights[0];
 

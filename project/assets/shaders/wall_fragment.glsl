@@ -4,22 +4,24 @@
 uniform sampler2D diffWall;
 uniform sampler2D normWall;
 
-in struct VertexData {
+struct VertexData {
     vec3 position;
     vec2 texCoords;
     vec3 normal;
-} vertexDataGeo;
+};
+in VertexData vertexDataGeo;
 
 in vec3 toCameraGeo;
 vec3 normalizedToCamera;
 
-in struct PointLight {
+struct PointLight {
     vec3 position;
     vec3 color;
     vec3 attenuation;
 };
 uniform PointLight pointLights[NUM_POINT_LIGHTS];
 in vec3 toPointLightsGeo[NUM_POINT_LIGHTS];
+
 vec3 normalizedToPointLight_current, normalizedReflectedToPointLight_current, normalizedHalfwayDirection_current;
 float cosAlpha_current, cosBetaK_current, cosBetaK_Halfway_current;
 
@@ -27,9 +29,6 @@ float cosAlpha_current, cosBetaK_current, cosBetaK_Halfway_current;
 in mat3 TBN;
 /* option 2 - unused */
 //mat3 invTNB = transpose(TBN); // transpose of orthogonal matrix equals its inverse
-
-/* Fragment Shader Output */
-out vec4 color;
 
 float getCosAngle(vec3 normalizedVector1, vec3 normalizedVector2) {
     return max(0.0f, dot(normalizedVector1, normalizedVector2));
@@ -47,7 +46,11 @@ vec3 rgbToNormalizedXyz(vec3 normTerm) {
     return normalize(normTerm * 2.0f - 1.0f);
 }
 
+/* Fragment Shader Output */
+out vec4 color;
+
 void main() {
+    // BUG: irgendwas stimmt mit Hasi..ehm, den texCoords nicht!
     vec3 diffTerm = texture(diffWall, vertexDataGeo.texCoords).rgb;
     vec3 normTerm = texture(normWall, vertexDataGeo.texCoords).rgb;
 
@@ -55,7 +58,7 @@ void main() {
     vec3 normalizedNormal = normalize(TBN * normTerm);
     normalizedToCamera = normalize(toCameraGeo);
 
-    color += vec4(diffTerm, 0.0f);
+    //color += vec4(diffTerm, 0.0f); //shows that verteDataGeo.texCoords is buggy
 
     /* brdfWall for each pointLight */
     for (int i = 0; i < pointLights.length; i++) {
@@ -68,6 +71,6 @@ void main() {
         cosBetaK_Halfway_current = getCosAngleK(getCosAngle(normalizedHalfwayDirection_current, normalizedNormal));
 
         /* brdf with YELLOW spotLight */
-        color += vec4(brdfWall(diffTerm, vec3(0.0f, 1.0f, 0.0f), cosAlpha_current, cosBetaK_Halfway_current, pointLights[i].color, toPointLightsGeo[i]), 0.0f);
+        color += vec4(brdfWall(diffTerm, vec3(1.0f, 1.0f, 1.0f), cosAlpha_current, cosBetaK_Halfway_current, pointLights[i].color, toPointLightsGeo[i]), 0.0f);
     }
 }

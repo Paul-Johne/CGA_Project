@@ -33,12 +33,6 @@ class Scene(private val window: GameWindow) {
 
     private val skybox : Renderable
 
-    private val tile003BENCH : Renderable
-    private val tile003GROUND : Renderable
-    private val tile003TREE : Renderable
-    private val tile003WALL : Renderable
-    private val tile003WATER : Renderable
-
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
     private val isoCamAnchor3 = Transformable()
@@ -56,6 +50,9 @@ class Scene(private val window: GameWindow) {
     private val tile007 : Tile
     private val tile008 : Tile
     private var tileList = mutableListOf<Tile?>()
+
+    private val isWall = mutableListOf<Mesh>()
+    private val noWall = mutableListOf<Mesh>()
 
     private val empty : EmptySpot
     private val keyObj : KeyObject
@@ -210,6 +207,14 @@ class Scene(private val window: GameWindow) {
 
         empty = EmptySpot(tileList)
 
+        for (mesh in tile001.tileData) {
+            if (mesh.material is MaterialWall) {
+                isWall.add(mesh)
+            } else {
+                noWall.add(mesh)
+            }
+        }
+
         /* player */
         player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
         player.translateLocal(Vector3f(0f, 1f, 0f))
@@ -248,9 +253,41 @@ class Scene(private val window: GameWindow) {
         skybox.render(skyShader)
         glDepthFunc(GL_LESS)
 
+        /*
         debugShader.use()
         isoCam.bind(debugShader)
 
+        player.render(debugShader)
+
+        keyObj.render(debugShader)
+        keyObjGoal.render(debugShader)
+
+        arrowNegX.render(debugShader)
+        arrowNegZ.render(debugShader)
+        arrowPosZ.render(debugShader)
+        arrowPosX.render(debugShader)
+
+        for (entry in noWall) {
+            entry.render(debugShader)
+        }
+
+        wallShader.use()
+        isoCam.bind(wallShader)
+        pointLight.bind(wallShader, 0)
+
+        for (entry in isWall) {
+            entry.render(wallShader)
+        }*/
+
+        debugShader.use()
+        isoCam.bind(debugShader)
+        player.render(debugShader)
+        keyObj.render(debugShader)
+        keyObjGoal.render(debugShader)
+        arrowNegX.render(debugShader)
+        arrowNegZ.render(debugShader)
+        arrowPosZ.render(debugShader)
+        arrowPosX.render(debugShader)
         tile001.render(debugShader)
         tile002.render(debugShader)
         tile003.render(debugShader)
@@ -259,16 +296,6 @@ class Scene(private val window: GameWindow) {
         tile006.render(debugShader)
         tile007.render(debugShader)
         tile008.render(debugShader)
-        
-        player.render(debugShader)
-        
-        keyObj.render(debugShader)
-        keyObjGoal.render(debugShader)
-        
-        arrowNegX.render(debugShader)
-        arrowNegZ.render(debugShader)
-        arrowPosZ.render(debugShader)
-        arrowPosX.render(debugShader)
     }
 
     fun update(dt: Float, t: Float) {

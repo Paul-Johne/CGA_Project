@@ -26,11 +26,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
         neighbourNegX = tileList[7]
         //neighbourPosX = tileList[1]
         //neighbourPosZ = tileList[3]
-        print(neighbourNegZ)
-        print(neighbourPosX)
-        print(neighbourPosZ)
-        print(neighbourNegX)
-        print("\n")
     }
 
     //empty nach Norden, vermutlich bugless

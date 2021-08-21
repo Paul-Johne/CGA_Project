@@ -21,9 +21,6 @@ class KeyObject(objPath: OBJLoader.OBJResult, objAttribs : Array<VertexAttribute
         }
     }
 
-
-
-
     override fun render(shaderProgram: ShaderProgram) {
         shaderProgram.setUniform("model_matrix", getLocalModelMatrix(), false)
         for (mesh in keyObjectData) {

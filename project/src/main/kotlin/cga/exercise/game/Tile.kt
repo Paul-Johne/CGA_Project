@@ -14,7 +14,6 @@ class Tile(objPath: OBJLoader.OBJResult, objAttribs : Array<VertexAttribute>, ti
     /** Contains meshes having vertexdata & indexdata **/
     val tileData : MutableList<Mesh> = mutableListOf()
 
-
     init {
         for (data in objPath.objects) {
             val tile003Data : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
@@ -45,10 +44,6 @@ class Tile(objPath: OBJLoader.OBJResult, objAttribs : Array<VertexAttribute>, ti
             }
         }
     }
-
-
-
-
 
     override fun render(shaderProgram: ShaderProgram) {
         shaderProgram.setUniform("model_matrix", getLocalModelMatrix(), false)

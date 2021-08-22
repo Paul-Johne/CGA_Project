@@ -35,4 +35,5 @@
 - Transparenz von Wasser mittels Blending [Kevin] -> s. Video
 >Weitergehende Konzepte:
 - Objekt Kollision [Kevin] -> s. Video
+#ANMERKUNG Dieses Feature ist im branch collision_Detection als Demo abspielbar. Wegen der Zeit und Komplikationen konnte dies in der Main nicht implementiert werden.
 - Hintergrundmusik [Paul]

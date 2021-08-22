@@ -2,6 +2,7 @@ package cga.exercise.game
 
 import cga.exercise.components.camera.TronCamera
 import cga.exercise.components.geometry.*
+import cga.exercise.components.light.PointLight
 import cga.exercise.components.shader.ShaderProgram
 import cga.exercise.components.texture.CubeMap
 import cga.exercise.components.texture.Texture2D
@@ -40,7 +41,14 @@ class Scene(private val window: GameWindow) {
 
     private val isoCamAnchor = Transformable()
     private val isoCamAnchor2 = Transformable()
+    private val isoCamAnchor3 = Transformable()
+    private val isoCamAnchor4 = Transformable()
+    private val isoCamList = mutableListOf<Transformable>()
     private val skyboxRotator = Transformable()
+
+    private val player : Player
+
+    private val pointLight : PointLight
 
     init {
         /* initial opengl state */
@@ -220,17 +228,34 @@ class Scene(private val window: GameWindow) {
         debugCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         debugCam.translateLocal(Vector3f(0.0f, 0.0f, 10.0f))
 
-        /* anchors */
+        /* anchors & isometric camera */
         isoCamAnchor.scaleLocal(Vector3f(0.1f))
         isoCamAnchor.translateLocal(Vector3f(100.0f, 0.0f, 100.0f))
         isoCamAnchor.rotateLocal(0f, toRadians(45f), 0f)
         isoCamAnchor2.scaleLocal(Vector3f(0.1f))
         isoCamAnchor2.translateLocal(Vector3f(100.0f, 0.0f, -100.0f))
         isoCamAnchor2.rotateLocal(0f, toRadians(135f), 0f)
+        isoCamAnchor3.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor3.translateLocal(Vector3f(-100.0f, 0.0f, -100.0f))
+        isoCamAnchor3.rotateLocal(0f, toRadians(225f), 0f)
+        isoCamAnchor4.scaleLocal(Vector3f(0.1f))
+        isoCamAnchor4.translateLocal(Vector3f(-100.0f, 0.0f, 100.0f))
+        isoCamAnchor4.rotateLocal(0f, toRadians(315f), 0f)
+        isoCamList.add(isoCamAnchor)
+        isoCamList.add(isoCamAnchor2)
+        isoCamList.add(isoCamAnchor3)
+        isoCamList.add(isoCamAnchor4)
 
-        isoCam = TronCamera(parent = isoCamAnchor)
+        isoCam = TronCamera(parent = isoCamList[0], place = 0)
         isoCam.rotateLocal(Math.toRadians(-35.0f), 0.0f, 0.0f)
         isoCam.translateLocal(Vector3f(.0f, 50.0f, 120.0f))
+
+        /* player */
+        player = Player(OBJLoader.loadOBJ("assets/models/cga_player.obj"), objAttribs, tileMat)
+        player.translateLocal(Vector3f(5f, 1f, 0f))
+
+        /* PointLight for Normal Mapping*/
+        pointLight = PointLight(Vector3f(0.0f, 0.0f, 0.0f), Vector3i(100, 100, 0), parent = isoCam.parent)
     }
 
     fun render(dt: Float, t: Float) {
@@ -245,8 +270,11 @@ class Scene(private val window: GameWindow) {
         glDepthFunc(GL_LESS)
 
         debugShader.use()
+        pointLight.bind(debugShader,0)
         //debugCam.bind(debugShader)
         isoCam.bind(debugShader)
+
+        player.render(debugShader)
 
         tile003GROUND.render(debugShader)
         tile003BENCH.render(debugShader)
@@ -296,14 +324,35 @@ class Scene(private val window: GameWindow) {
         lightCycle.translateLocal(Vector3f(0f,-5f * dt, 0f))
         }*/
 
-        /* rotate isometric camera */
-        if(window.getKeyState(GLFW_KEY_1)) {
-            isoCam.parent = isoCamAnchor
-        }
-        if(window.getKeyState(GLFW_KEY_2)) {
-            isoCam.parent = isoCamAnchor2
-        }
+        /* player movement, key follows player if it gets carried*/
+        if(window.getKeyState(GLFW_KEY_W)) {
 
+            if(!detectCollision(player, tile003TREE, 0.5f, 0.5f, 2.5f, 4.0f)){
+                player.translateLocal(Vector3f(-5f* dt, 0f, 0f))
+            }
+            else{
+                player.translateLocal(Vector3f(1/3f, 0f, 0f))
+            }
+            if(window.getKeyState(GLFW_KEY_A))
+                player.rotateLocal(0f, 5f * dt, 0f)
+            if(window.getKeyState(GLFW_KEY_D))
+                player.rotateLocal(0f, -5f * dt, 0f)
+        }
+        if(window.getKeyState(GLFW_KEY_S)) {
+            if(!detectCollision(player, tile003TREE, 0.5f, 0.5f, 2.5f, 4.0f)){
+                player.translateLocal(Vector3f(1.5f * dt, 0f, 0f))
+            }
+            else{
+                player.translateLocal(Vector3f(-1/3f, 0f, 0f))
+            }
+            if(window.getKeyState(GLFW_KEY_A))
+                player.rotateLocal(0f, -1.5f * dt, 0f)
+            if(window.getKeyState(GLFW_KEY_D))
+                player.rotateLocal(0f, 1.5f * dt, 0f)
+        }
+    }
+
+    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {
         if(window.getKeyState(GLFW_KEY_P)){
             debugShader.setUniform("shaderType",0)
             waterShader.setUniform("shaderType",0)
@@ -315,9 +364,27 @@ class Scene(private val window: GameWindow) {
         if(window.getKeyState(GLFW_KEY_T)){
             debugShader.setUniform("shaderType",2)
         }
-    }
 
-    fun onKey(key: Int, scancode: Int, action: Int, mode: Int) {}
+        /* rotate isometric camera */
+        if(window.getKeyState(GLFW_KEY_1)) {
+            if (isoCam.place < 3) {
+                isoCam.place++
+            } else {
+                isoCam.place = 0
+            }
+            isoCam.parent = isoCamList[isoCam.place]
+            pointLight.parent = isoCam.parent
+        }
+        if(window.getKeyState(GLFW_KEY_2)) {
+            if (isoCam.place != 0) {
+                isoCam.place--
+            } else {
+                isoCam.place = 3
+            }
+            isoCam.parent = isoCamList[isoCam.place]
+            pointLight.parent = isoCam.parent
+        }
+    }
 
     var lastMousePosX : Double = 0.0
     //var lastMousePosY : Double = 0.0
@@ -344,7 +411,7 @@ class Scene(private val window: GameWindow) {
         println("cleanup..")
     }
 
-    fun detectCollision(a : Renderable, b : Renderable, a_width : Float, a_length : Float, b_width : Float, b_length : Float) : Boolean =
+    fun detectCollision(a : Player, b : Renderable, a_width : Float, a_length : Float, b_width : Float, b_length : Float) : Boolean =
             (((a.getPosition().x - a_width / 2 <= b.getPosition().x + b_width / 2) &&
               (a.getPosition().x + a_width / 2 >= b.getPosition().x - b_width / 2)) &&
              ((a.getPosition().z - a_length / 2 <= b.getPosition().z + b_length / 2) &&

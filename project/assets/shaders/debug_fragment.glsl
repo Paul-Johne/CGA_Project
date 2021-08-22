@@ -2,7 +2,7 @@
 
 // NO "in vec3 col" for "out vec4 color", since we're only using textures
 uniform sampler2D diffPalette;
-//uniform sampler2D diffWall;
+uniform sampler2D diffWall;
 
 out vec4 color;
 
@@ -15,8 +15,8 @@ in struct VertexData {
 void main() {
     /* objects with different material in same shader => Trick: textureUnit must be the same */
     vec3 diffPaletteTerm = texture(diffPalette, vertexData.textureCoordinates).rgb;
-    //vec3 diffWallTerm = texture(diffWall, vertexData.textureCoordinates).rgb;
+    vec3 diffWallTerm = texture(diffWall, vertexData.textureCoordinates).rgb;
 
     color += vec4(diffPaletteTerm, 0.0f);
-    //color += vec4(diffWallTerm, 0.0f);
+    color += vec4(diffWallTerm, 0.0f);
 }

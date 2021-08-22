@@ -5,6 +5,9 @@ uniform sampler2D diffWall;
 uniform sampler2D normWall;
 uniform sampler2D specWall;
 
+uniform int shaderType;
+vec3 lum = vec3(0.299f, 0.587f, 0.114f);
+
 struct VertexData {
     vec3 position;
     vec2 texCoords;
@@ -59,7 +62,12 @@ void main() {
     vec3 normalizedNormal = normalize(TBN * normTerm);
     normalizedToCamera = normalize(toCameraGeo);
 
-    color += vec4(diffTerm, 0.0f);
+    /* fast bugfixing */
+    if (shaderType == 1) {
+        color += vec4(vec3(dot(diffTerm.rgb, lum)), color.a);
+    } else {
+        color += vec4(diffTerm, 1.0f);
+    }
 
     /* brdfWall for each pointLight */
     for (int i = 0; i < pointLights.length; i++) {

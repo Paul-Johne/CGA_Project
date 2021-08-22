@@ -317,9 +317,16 @@ class Scene(private val window: GameWindow) {
             pointLight.parent = isoCam.parent
         }
 
+        if(window.getKeyState(GLFW_KEY_C)){
+            wallShader.setUniform("shaderType",0)
+        }
+        if(window.getKeyState(GLFW_KEY_X)){
+            wallShader.setUniform("shaderType",1)
+        }
+
         /* tile movement */
         //empty nach Norden
-        if (window.getKeyState(GLFW_KEY_T)) {
+        if (window.getKeyState(GLFW_KEY_G)) {
             var i = 0
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourNegZ && tileList[i] != null) {
@@ -347,7 +354,7 @@ class Scene(private val window: GameWindow) {
             }
         }
         //empty nach Süden
-        if (window.getKeyState(GLFW_KEY_G)) {
+        if (window.getKeyState(GLFW_KEY_T)) {
             var i = 0
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourPosZ  && tileList[i] != null) {
@@ -375,7 +382,7 @@ class Scene(private val window: GameWindow) {
             }
         }
         //empty nach Westen
-        if (window.getKeyState(GLFW_KEY_F)) {
+        if (window.getKeyState(GLFW_KEY_H)) {
             var i = 0
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourNegX && tileList[i] != null) {
@@ -404,7 +411,7 @@ class Scene(private val window: GameWindow) {
         }
 
         //empty nach Osten
-        if (window.getKeyState(GLFW_KEY_H)) {
+        if (window.getKeyState(GLFW_KEY_F)) {
             var i = 0
             for (data in tileList) {
                 if (tileList[i] == empty.neighbourPosX && tileList[i] != null) {

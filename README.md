@@ -1,6 +1,9 @@
 # Projektname
 >Swipe MI
 
+# ANMERKUNG 
+Die Features "Collision Detection" und "Texture Blending", welche auch im Video zu sehen sind, ist im Branch **collision_Detection** als Demo abspielbar. Wegen der Zeit und Komplikationen konnte dies in der Main nicht implementiert werden. (Inhalte der Tiles sind Meshes und keine Renderables)
+
 # Teammitglieder
 - Kevin Repke (11141317)
 - Paul André Johne (11138534)
@@ -35,5 +38,4 @@
 - Transparenz von Wasser mittels Blending [Kevin] -> s. Video
 >Weitergehende Konzepte:
 - Objekt Kollision [Kevin] -> s. Video
-#ANMERKUNG Dieses Feature ist im branch collision_Detection als Demo abspielbar. Wegen der Zeit und Komplikationen konnte dies in der Main nicht implementiert werden.
 - Hintergrundmusik [Paul]

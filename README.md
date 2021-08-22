@@ -24,7 +24,7 @@
 - mehrere Materialien (Wall vs. Rest) in einem Shader verarbeiten [Paul]
 - Dynamisches Normal Mapping [Paul]
 >Transformationen:
-- automatische Transformation ("Rascheln" von Blättern eines z.B. Baumes, der auf einer Tile steht) [Sara]
+- automatische Transformation (Rotation des Schlüssels) [Sara]
 - aufgehobene Schlüsselobjekte werden mit der Figur mitbewegt (interaktive abhängige Transformation) [Sara]
 >Kamera:
 - Rotieren zu festen Positionen um die Welt [Sara]

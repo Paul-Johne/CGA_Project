@@ -16,26 +16,24 @@ class Tile(objPath: OBJLoader.OBJResult, objAttribs : Array<VertexAttribute>, ti
 
     init {
         for (data in objPath.objects) {
-            val tile003Data : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
-            val tile003IsWall : MutableList<Boolean> = mutableListOf()
+            val tileData : MutableList<MutableList<OBJLoader.OBJMesh>> = mutableListOf()
+            val tileIsWall : MutableList<Boolean> = mutableListOf()
 
-            for (data in objPath.objects) {
-                tile003Data.add(data.meshes)
-                tile003IsWall.add(data.isWall)
-            }
+            tileData.add(data.meshes)
+            tileIsWall.add(data.isWall)
 
             var objectCounter = 0
-            for (tileObject in tile003Data) {
+            for (tileObject in tileData) {
                 for((meshes, _) in tileObject.withIndex()) {
-                    if (tile003IsWall[objectCounter]) {
+                    if (tileIsWall[objectCounter]) {
                         println("Wall detected")
-                        tileData.add(Mesh(tileObject[meshes].vertexData,
+                        this.tileData.add(Mesh(tileObject[meshes].vertexData,
                                 tileObject[meshes].indexData,
                                 objAttribs, wallMat))
                         objectCounter += 1
                     } else {
                         println("Tile detected")
-                        tileData.add(Mesh(tileObject[meshes].vertexData,
+                        this.tileData.add(Mesh(tileObject[meshes].vertexData,
                                 tileObject[meshes].indexData,
                                 objAttribs, tileMat))
                         objectCounter += 1

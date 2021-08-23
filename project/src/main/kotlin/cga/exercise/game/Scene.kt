@@ -236,8 +236,8 @@ class Scene(private val window: GameWindow) {
 
         glDepthFunc(GL_LEQUAL)
         skyShader.use()
-        skyShader.setUniform("view_matrix", Matrix4f(), false)
-        skyShader.setUniform("projection_matrix", skyboxRotator.modelMatrix, false)
+        skyShader.setUniform("view_matrix", skyboxRotator.modelMatrix, false)
+        skyShader.setUniform("projection_matrix", Matrix4f(), false)
         skyboxTex.bind(0, skyShader)
         skybox.render(skyShader)
         glDepthFunc(GL_LESS)

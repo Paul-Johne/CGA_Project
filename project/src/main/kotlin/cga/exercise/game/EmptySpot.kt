@@ -6,13 +6,6 @@ import cga.exercise.components.geometry.Transformable
 import org.joml.Matrix4f
 import javax.xml.crypto.dsig.Transform
 
-/**
- *  n1 nördlich
- *  n2 östlich
- *  n3 südlich
- *  n4 westlich
- */
-
 class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(), parent: Transformable? = null) : Transformable(modelMatrix, parent) {
     var neighbourNegZ : Tile? = null //N
     var neighbourPosX : Tile? = null //O
@@ -24,16 +17,12 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
     init {
         neighbourNegZ = tileList[5]
         neighbourNegX = tileList[7]
-        //neighbourPosX = tileList[1]
-        //neighbourPosZ = tileList[3]
     }
 
     //empty nach Norden, vermutlich bugless
     fun moveNegZ(place : Int) : MutableList<Tile?>{
         print(place)
-
         val oldList = listofTiles
-        val tmp = listofTiles[place]
         listofTiles[emptyPlace] = oldList[place]
         listofTiles[place] = oldList[emptyPlace]
         emptyPlace = place
@@ -59,13 +48,10 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
     //empty nach Süden
     fun movePosZ(place : Int) : MutableList<Tile?>{
         print(place)
-
         val oldList = listofTiles
-        val tmp = listofTiles[place]
         listofTiles[emptyPlace] = oldList[place]
         listofTiles[place] = oldList[emptyPlace]
         emptyPlace = place
-
 
         if (place+3 < 9) {
             neighbourPosZ = listofTiles[emptyPlace+3]
@@ -87,7 +73,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
     fun moveNegX(place : Int) : MutableList<Tile?>{
         print(place)
         val oldList = listofTiles
-        val tmp = listofTiles[place]
         listofTiles[emptyPlace] = oldList[place]
         listofTiles[place] = oldList[emptyPlace]
         emptyPlace = place
@@ -113,7 +98,6 @@ class EmptySpot(tileList : MutableList<Tile?>, modelMatrix: Matrix4f = Matrix4f(
     fun movePosX(place : Int) : MutableList<Tile?> {
         print(place)
         val oldList = listofTiles
-        val tmp = listofTiles[place]
         listofTiles[emptyPlace] = oldList[place]
         listofTiles[place] = oldList[emptyPlace]
         emptyPlace = place

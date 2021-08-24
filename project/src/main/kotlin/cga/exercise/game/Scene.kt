@@ -50,6 +50,7 @@ class Scene(private val window: GameWindow) {
     private val tile007 : Tile
     private val tile008 : Tile
     private var tileList = mutableListOf<Tile?>()
+    private var oldcommand : Int = 4
 
     private val empty : EmptySpot
     private val keyObj : KeyObject
@@ -329,14 +330,17 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState(GLFW_KEY_G)) {
             var i = 0
             for (data in tileList) {
-                if (tileList[i] == empty.neighbourNegZ && tileList[i] != null) {
+                if (tileList[i] == empty.neighbourNegZ && tileList[i] != null && oldcommand != 1) {
                     tileList[i]?.translateLocal(Vector3f(0f, 0f, 10f))
                     /* keyObj and keyObjGoal follow their tile movement*/
-                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                    if(!keyObj.getcarried && !keyObj.atgoal && tileList[i] == tile006) {
                         keyObj.translateGlobal(Vector3f(0f, 0f, 10f))
                     }
                     if (tileList[i] == tile008) {
                         keyObjGoal.translateGlobal(Vector3f(0f, 0f, 10f))
+                        if (keyObj.atgoal) {
+                            keyObj.translateGlobal(Vector3f(0f, 0f, 10f))
+                        }
                     }
                     tileList = empty.moveNegZ(i)
                     /* arrow placement */
@@ -348,6 +352,7 @@ class Scene(private val window: GameWindow) {
                     }
                     arrowPosX.translateLocal(Vector3f(0f, 0f, 10f))
                     arrowNegX.translateLocal(Vector3f(0f, 0f, -10f))
+                    oldcommand = 0
                     return
                 }
                 i++
@@ -357,14 +362,17 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState(GLFW_KEY_T)) {
             var i = 0
             for (data in tileList) {
-                if (tileList[i] == empty.neighbourPosZ  && tileList[i] != null) {
+                if (tileList[i] == empty.neighbourPosZ  && tileList[i] != null && oldcommand != 0) {
                     tileList[i]?.translateLocal(Vector3f(0f, 0f, -10f))
                     /* keyObj and keyObjGoal follow their tile movement*/
-                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                    if(!keyObj.getcarried && !keyObj.atgoal && tileList[i] == tile006) {
                         keyObj.translateGlobal(Vector3f(0f, 0f, -10f))
                     }
                     if (tileList[i] == tile008) {
                         keyObjGoal.translateGlobal(Vector3f(0f, 0f, -10f))
+                        if (keyObj.atgoal) {
+                            keyObj.translateGlobal(Vector3f(0f, 0f, -10f))
+                        }
                     }
                     tileList = empty.movePosZ(i)
                     /* arrow placement */
@@ -376,6 +384,7 @@ class Scene(private val window: GameWindow) {
                     }
                     arrowPosX.translateLocal(Vector3f(0f, 0f, -10f))
                     arrowNegX.translateLocal(Vector3f(0f, 0f, 10f))
+                    oldcommand = 1
                     return
                 }
                 i++
@@ -385,14 +394,17 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState(GLFW_KEY_H)) {
             var i = 0
             for (data in tileList) {
-                if (tileList[i] == empty.neighbourNegX && tileList[i] != null) {
+                if (tileList[i] == empty.neighbourNegX && tileList[i] != null && oldcommand != 3) {
                     tileList[i]?.translateLocal(Vector3f(10f, 0f, 0f))
                     /* keyObj and keyObjGoal follow their tile movement*/
-                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                    if(!keyObj.getcarried && !keyObj.atgoal && tileList[i] == tile006) {
                         keyObj.translateGlobal(Vector3f(10f, 0f, 0f))
                     }
                     if (tileList[i] == tile008) {
                         keyObjGoal.translateGlobal(Vector3f(10f, 0f, 0f))
+                        if (keyObj.atgoal) {
+                            keyObj.translateGlobal(Vector3f(10f, 0f, 0f))
+                        }
                     }
                     tileList = empty.moveNegX(i)
                     /* arrow placement */
@@ -404,6 +416,7 @@ class Scene(private val window: GameWindow) {
                     }
                     arrowPosZ.translateLocal(Vector3f(0f, 0f, -10f))
                     arrowNegZ.translateLocal(Vector3f(0f, 0f, 10f))
+                    oldcommand = 2
                     return
                 }
                 i++
@@ -414,14 +427,17 @@ class Scene(private val window: GameWindow) {
         if (window.getKeyState(GLFW_KEY_F)) {
             var i = 0
             for (data in tileList) {
-                if (tileList[i] == empty.neighbourPosX && tileList[i] != null) {
+                if (tileList[i] == empty.neighbourPosX && tileList[i] != null && oldcommand != 2) {
                     tileList[i]?.translateLocal(Vector3f(-10f, 0f, 0f))
                     /* keyObj and keyObjGoal follow their tile movement*/
-                    if(!keyObj.getcarried && tileList[i] == tile006) {
+                    if(!keyObj.getcarried && !keyObj.atgoal && tileList[i] == tile006) {
                         keyObj.translateGlobal(Vector3f(-10f, 0f, 0f))
                     }
                     if (tileList[i] == tile008) {
                         keyObjGoal.translateGlobal(Vector3f(-10f, 0f, 0f))
+                        if (keyObj.atgoal) {
+                            keyObj.translateGlobal(Vector3f(-10f, 0f, 0f))
+                        }
                     }
                     tileList = empty.movePosX(i)
                     /* arrow placement */
@@ -433,6 +449,7 @@ class Scene(private val window: GameWindow) {
                     }
                     arrowPosZ.translateLocal(Vector3f(0f, 0f, 10f))
                     arrowNegZ.translateLocal(Vector3f(0f, 0f, -10f))
+                    oldcommand = 3
                     return
                 }
                 i++
